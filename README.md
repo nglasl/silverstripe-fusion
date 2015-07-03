@@ -2,6 +2,6 @@
 
 This module is currently in progress.
 
-## TO DO
+## TO DO - PAGE SEARCH
 
-- Make sure the "$many_many tags" relationship is searchable, which may either search against fusion tags or an already existing "tags" relationship.
+- Search against FusionTags, then loop through each subclass of SiteTree to determine other relationship fields to search on, based on parseTags.

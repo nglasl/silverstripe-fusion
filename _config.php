@@ -11,7 +11,7 @@ if(!defined('FUSION_PATH')) {
 
 // Apply any extensions.
 
-foreach(Singleton('FusionTag')->parseTags() as $tag => $field) {
+foreach(singleton('FusionTag')->parseTags() as $tag => $field) {
 	Object::add_extension($tag, 'FusionExtension');
 }
 

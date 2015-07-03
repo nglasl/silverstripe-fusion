@@ -14,6 +14,10 @@ class FusionTag extends DataObject {
 		'Types' => 'Text'
 	);
 
+	private static $belongs_many_many = array(
+		'Pages' => 'SiteTree'
+	);
+
 	private static $tags = array();
 
 	public function requireDefaultRecords() {
@@ -116,9 +120,9 @@ class FusionTag extends DataObject {
 		$classes = ClassInfo::subclassesFor('DataObject');
 		foreach($classes as $object) {
 
-			// Determine tags to fuse based on data objects ending with "tag".
+			// Determine tags to fuse based on data objects ending with "Tag".
 
-			if((stripos(strrev($object), strrev('Tag')) === 0) && ($object !== get_class())) {
+			if((strpos(strrev($object), strrev('Tag')) === 0) && ($object !== get_class())) {
 				$tagTypes[$object] = 'Title';
 			}
 		}

@@ -4,22 +4,28 @@
 
 class SiteTreeTagsExtension extends DataExtension {
 
-	// name it tags so that two tagging modules can't be used on the same page
+	// use a separate tag name to avoid issues around merging many_many relationships based on priority
 
 	private static $many_many = array(
-		'Tags' => 'FusionTag'
+		'FusionTags' => 'FusionTag'
 	);
 
 	public function updateCMSFields(FieldList $fields) {
 
-		// make sure a tags relationship doesn't already exist
+		$output = array();
+		foreach(singleton('FusionTag')->parseTags() as $tag => $field) {
+			$output[$tag] = $tag;
+		}
+		$intersect = array_intersect($output, $this->owner->many_many());
 
-		if($this->owner->Tags()->dataClass() === 'FusionTag') {
+		// if there are no "fused" tags found in the many_many relationship, add the fusion tagging
+
+		if(empty($intersect)) {
 
 			// allow tagging for the current page
 
 			$fields->addFieldToTab('Root.Tagging', ListboxField::create(
-				'Tags',
+				'FusionTags',
 				'Tags',
 				FusionTag::get()->map()->toArray()
 			)->setMultiple(true));
