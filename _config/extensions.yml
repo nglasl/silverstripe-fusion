@@ -1,0 +1,6 @@
+---
+name: fusion-extensions
+---
+SiteTree:
+  extensions:
+    - 'SiteTreeTagsExtension'
