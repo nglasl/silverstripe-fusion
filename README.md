@@ -2,6 +2,6 @@
 
 This module is currently in progress.
 
-## TO DO - PAGE SEARCH
+## TO DO
 
-- Search against FusionTags.
+- Hook the site search into this, possibly translating the FusionTags to a single database field.

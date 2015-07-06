@@ -1,8 +1,8 @@
 <?php
 
-// this extension will automatically be applied to pages, allowing tagging out of the box
+// this extension will automatically be applied to pages, allowing tagging out of the box, however can also be applied to data objects
 
-class SiteTreeTagsExtension extends DataExtension {
+class TaggingExtension extends DataExtension {
 
 	// use a separate tag name to avoid issues around merging many_many relationships based on priority
 

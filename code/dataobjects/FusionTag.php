@@ -14,10 +14,6 @@ class FusionTag extends DataObject {
 		'Types' => 'Text'
 	);
 
-	private static $belongs_many_many = array(
-		'Pages' => 'SiteTree'
-	);
-
 	private static $tags = array();
 
 	public function requireDefaultRecords() {
