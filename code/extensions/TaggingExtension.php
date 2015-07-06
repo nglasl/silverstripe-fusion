@@ -62,7 +62,7 @@ class TaggingExtension extends DataExtension {
 
 			$tagging = array();
 			foreach($this->owner->FusionTags() as $tag) {
-				$tagging = $tag->Title;
+				$tagging[] = $tag->Title;
 			}
 			$this->owner->Tagging = implode(' ', $tagging);
 		}
