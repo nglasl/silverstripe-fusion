@@ -54,14 +54,26 @@ class TaggingExtension extends DataExtension {
 		}
 		$intersect = array_intersect($this->owner->many_many(), $output);
 
-		// if there are "fused" tags found in the many_many relationship, write these into FusionTags, so we have a single search field
+		// if there are no "fused" tags in place
 
-		if(!empty($intersect)) {
+		if(empty($intersect)) {
+
+			// store the fusion tagging in a database field to allow searching without needing to parse the many_many relationship
+
+			$tagging = array();
+			foreach($this->owner->FusionTags() as $tag) {
+				$tagging = $tag->Title;
+			}
+			$this->owner->Tagging = implode(' ', $tagging);
+		}
+
+		// if there are "fused" tags found in the many_many relationship, write these into Tagging and FusionTags, so we have a single search field
+
+		else {
 
 			// clear the fusion tags out so we can keep it completely in sync
 
 			$this->owner->FusionTags()->removeAll();
-			$this->owner->Tagging = null;
 
 			// retrieve each relationship
 
@@ -79,6 +91,9 @@ class TaggingExtension extends DataExtension {
 					$tagging[] = $fusion->Title;
 				}
 			}
+
+			// store the fusion tagging in a database field to allow searching without needing to parse the many_many relationship
+
 			$this->owner->Tagging = implode(' ', $tagging);
 		}
 	}
