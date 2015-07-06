@@ -6,12 +6,12 @@
 class FusionExtension extends DataExtension {
 
 	private static $has_one = array(
-		'Fusion' => 'FusionTag'
+		'FusionTag' => 'FusionTag'
 	);
 
 	public function updateCMSFields(FieldList $fields) {
 
-		$fields->removeByName('FusionID');
+		$fields->removeByName('FusionTagID');
 	}
 
 	public function onAfterWrite() {
@@ -46,7 +46,7 @@ class FusionExtension extends DataExtension {
 				$this->owner->ClassName => $this->owner->ClassName
 			));
 			$fusion->write();
-			$this->owner->FusionID = $fusion->ID;
+			$this->owner->FusionTagID = $fusion->ID;
 			$this->owner->write();
 		}
 		else if(isset($changed['ID']) && $existing) {
@@ -57,10 +57,10 @@ class FusionExtension extends DataExtension {
 			$test[$this->owner->ClassName] = $this->owner->ClassName;
 			$existing->Types = serialize($test);
 			$existing->write();
-			$this->owner->FusionID = $existing->ID;
+			$this->owner->FusionTagID = $existing->ID;
 			$this->owner->write();
 		}
-		else if(isset($changed[$fusionField]) && ($existing = FusionTag::get()->byID($this->owner->FusionID))) {
+		else if(isset($changed[$fusionField]) && ($existing = FusionTag::get()->byID($this->owner->FusionTagID))) {
 
 			// update the existing fusion tag title
 
@@ -77,7 +77,7 @@ class FusionExtension extends DataExtension {
 
 		// Remove this media type from the fusion tag, but don't delete the fusion tag.
 
-		$fusion = FusionTag::get()->byID($this->owner->FusionID);
+		$fusion = FusionTag::get()->byID($this->owner->FusionTagID);
 		$types = unserialize($fusion->Types);
 		unset($types[$this->owner->ClassName]);
 		$fusion->Types = serialize($types);

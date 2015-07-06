@@ -91,7 +91,7 @@ class FusionTag extends DataObject {
 
 					$new = $tag::create();
 					$new->$field = $this->Title;
-					$new->FusionID = $this->ID;
+					$new->FusionTagID = $this->ID;
 					$new->write();
 				}
 				else if(!isset($changed['ID']) && isset($changed['Title']) && ($existing = $tag::get()->filter($field, $changed['Title']['before'])->first())) {
@@ -137,7 +137,7 @@ class FusionTag extends DataObject {
 
 		// Loop through existing tags and create a fusion tag for each, or add the type to an existing fusion tag.
 
-		if(($tags = $object::get()->filter('FusionID', 0)) && $tags->exists()) {
+		if(($tags = $object::get()->filter('FusionTagID', 0)) && $tags->exists()) {
 			foreach($tags as $tag) {
 				if($existing = FusionTag::get()->filter('Title', $tag->$field)->first()) {
 					$test = unserialize($existing->Types);
@@ -147,7 +147,7 @@ class FusionTag extends DataObject {
 					$test[$tag->ClassName] = $tag->ClassName;
 					$existing->Types = serialize($test);
 					$existing->write();
-					$tag->FusionID = $existing->ID;
+					$tag->FusionTagID = $existing->ID;
 					$tag->write();
 					DB::alteration_message('Fusion Tag CHANGED: ' . $tag->$field, 'changed');
 				}
@@ -158,7 +158,7 @@ class FusionTag extends DataObject {
 						$tag->ClassName => $tag->ClassName
 					));
 					$fusion->write();
-					$tag->FusionID = $fusion->ID;
+					$tag->FusionTagID = $fusion->ID;
 					$tag->write();
 					DB::alteration_message('Fusion Tag: ' . $tag->$field, 'created');
 				}

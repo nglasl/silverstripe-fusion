@@ -62,7 +62,7 @@ class TaggingExtension extends DataExtension {
 
 					// retrieve the associated fusion tag and push this into FusionTags
 
-					$this->owner->FusionTags()->add($tag->Fusion());
+					$this->owner->FusionTags()->add($tag->FusionTag());
 				}
 			}
 		}
