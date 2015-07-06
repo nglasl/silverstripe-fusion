@@ -4,6 +4,16 @@
 
 class TaggingExtension extends DataExtension {
 
+	// store tags in a database field to allow searching without needing to parse the many_many relationship
+
+	private static $db = array(
+		'Tagging' => 'Text'
+	);
+
+	private static $searchable_fields = array(
+		'Tagging'
+	);
+
 	// use a separate tag name to avoid issues around merging many_many relationships based on priority
 
 	private static $many_many = array(
@@ -51,20 +61,25 @@ class TaggingExtension extends DataExtension {
 			// clear the fusion tags out so we can keep it completely in sync
 
 			$this->owner->FusionTags()->removeAll();
+			$this->owner->Tagging = null;
 
 			// retrieve each relationship
 
+			$tagging = array();
 			foreach($intersect as $relationship => $tags) {
 
 				// retrieve each tag
 
 				foreach($this->owner->$relationship() as $tag) {
 
-					// retrieve the associated fusion tag and push this into FusionTags
+					// retrieve the associated fusion tag and push this into Tags and FusionTags
 
-					$this->owner->FusionTags()->add($tag->FusionTag());
+					$fusion = $tag->FusionTag();
+					$this->owner->FusionTags()->add($fusion);
+					$tagging[] = $fusion->Title;
 				}
 			}
+			$this->owner->Tagging = implode(' ', $tagging);
 		}
 	}
 
