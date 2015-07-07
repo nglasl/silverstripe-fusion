@@ -96,17 +96,25 @@ class FusionTag extends DataObject {
 		foreach($this->service->getFusionTagTypes() as $type => $field) {
 			$types[$type] = $type;
 		}
-		$fields->replaceField('TagTypes', $list = ListboxField::create(
-			'Types',
-			'Tag Types',
-			$types
-		)->setMultiple(true));
 
-		// Disable any existing types to prevent deletion.
+		// Determine whether the tag types should be displayed.
 
-		$items = is_string($this->TagTypes) ? array_keys(unserialize($this->TagTypes)) : array();
-		$list->setValue($items);
-		$list->setDisabledItems($items);
+		if(count($types)) {
+			$fields->replaceField('TagTypes', $list = ListboxField::create(
+				'Types',
+				'Tag Types',
+				$types
+			)->setMultiple(true));
+
+			// Disable any existing types to prevent deletion.
+
+			$items = is_string($this->TagTypes) ? array_keys(unserialize($this->TagTypes)) : array();
+			$list->setValue($items);
+			$list->setDisabledItems($items);
+		}
+		else {
+			$fields->removeByName('TagTypes');
+		}
 		return $fields;
 	}
 
