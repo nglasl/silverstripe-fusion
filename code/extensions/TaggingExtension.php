@@ -11,6 +11,8 @@ class TaggingExtension extends DataExtension {
 	);
 
 	private static $searchable_fields = array(
+		'Title',
+		'Content',
 		'Tagging'
 	);
 
