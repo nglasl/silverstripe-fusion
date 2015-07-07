@@ -9,10 +9,10 @@ if(!defined('FUSION_PATH')) {
 	define('FUSION_PATH', rtrim(basename(dirname(__FILE__))));
 }
 
-// Apply any extensions.
+// Apply the fusion tag extensions.
 
-foreach(singleton('FusionTag')->parseTags() as $tag => $field) {
-	Object::add_extension($tag, 'FusionExtension');
+foreach(singleton('FusionService')->getFusionTagTypes() as $type => $field) {
+	Object::add_extension($type, 'FusionExtension');
 }
 
 // Update the current fusion admin icon.

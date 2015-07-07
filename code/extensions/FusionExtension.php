@@ -1,7 +1,9 @@
 <?php
 
-// this extension will automatically be applied to existing tags, or those you have defined through config
-// this will basically keep the existings tags inline with the new global fusion tags
+/**
+ *	This extension will automatically be applied to existing and configuration defined tag types, and will update the associated fusion tag to reflect changes.
+ *	@author Nathan Glasl <nathan@silverstripe.com.au>
+ */
 
 class FusionExtension extends DataExtension {
 
@@ -9,106 +11,130 @@ class FusionExtension extends DataExtension {
 		'FusionTag' => 'FusionTag'
 	);
 
-	public function updateCMSFields(FieldList $fields) {
-
-		$fields->removeByName('FusionTagID');
-	}
-
-	public function onAfterWrite() {
-
-		// this is in on before write because we need to assign the fusion ID
-
-		parent::onAfterWrite();
-
-		// Make sure there's a relevant fusion tag for each other tag created and modified.
-		// Retrieve the "fusion field" from config, otherwise fall back to the default.
-
-		$fusionField = 'Title';
-		foreach(Config::inst()->get('FusionTag', 'tags') as $tag => $field) {
-			if($tag === $this->owner->ClassName) {
-				$fusionField = $field;
-			}
-		}
-
-		// If the tag has been changed, reflect this change for the appropriate fusion tag.
-
-		$changed = $this->owner->getChangedFields();
-
-		// we can't use fusion ID here because the fusion tag may need to be created so a fusion ID can be retrieved
-
-		if(isset($changed['ID']) && !($existing = FusionTag::get()->filter('Title', $this->owner->$fusionField)->first())) {
-
-			// create new fusion tag
-
-			$fusion = FusionTag::create();
-			$fusion->Title = $this->owner->$fusionField;
-			$fusion->Types = serialize(array(
-				$this->owner->ClassName => $this->owner->ClassName
-			));
-			$fusion->write();
-			$this->owner->FusionTagID = $fusion->ID;
-			$this->owner->write();
-		}
-		else if(isset($changed['ID']) && $existing) {
-
-			//add this type to THAT fusion tag
-
-			$test = unserialize($existing->Types);
-			$test[$this->owner->ClassName] = $this->owner->ClassName;
-			$existing->Types = serialize($test);
-			$existing->write();
-			$this->owner->FusionTagID = $existing->ID;
-			$this->owner->write();
-		}
-		else if(isset($changed[$fusionField]) && ($existing = FusionTag::get()->byID($this->owner->FusionTagID))) {
-
-			// update the existing fusion tag title
-
-			$existing->Title = $changed[$fusionField]['after'];
-			$existing->write();
-		}
-	}
-
-	// this basically unlinks a fusion tag, but is only defined on the off chance that you happen to get around permissions and delete a tag
-
-	public function onAfterDelete() {
-
-		parent::onAfterDelete();
-
-		// Remove this media type from the fusion tag, but don't delete the fusion tag.
-
-		$fusion = FusionTag::get()->byID($this->owner->FusionTagID);
-		$types = unserialize($fusion->Types);
-		unset($types[$this->owner->ClassName]);
-		$fusion->Types = serialize($types);
-		$fusion->write();
-	}
-
-	// Don't allow deletion of tags, because this could cause data integrity issues.
+	/**
+	 *	Restrict access for CMS users deleting tags.
+	 *
+	 *	@parameter <{CURRENT_MEMBER}> member
+	 *	@return boolean
+	 */
 
 	public function canDelete($member) {
 
 		return false;
 	}
 
+	/**
+	 *	Make sure the associated fusion tag is not visible.
+	 */
+
+	public function updateCMSFields(FieldList $fields) {
+
+		$fields->removeByName('FusionTagID');
+	}
+
+	/**
+	 *	Confirm that the current tag is valid.
+	 */
+
 	public function validate(ValidationResult $result) {
 
-		$fusionField = 'Title';
-		foreach(Config::inst()->get('FusionTag', 'tags') as $tag => $field) {
-			if($tag === $this->owner->ClassName) {
-				$fusionField = $field;
+		// Determine the field to validate, based on configuration that may have been defined.
+
+		$validate = 'Title';
+		foreach(Config::inst()->get('FusionService', 'custom_tag_types') as $type => $field) {
+			if($type === $this->owner->ClassName) {
+				$validate = $field;
 			}
 		}
 
 		// Confirm that the current tag has been given a title and doesn't already exist.
 
-		$this->owner->$fusionField = strtolower($this->owner->$fusionField);
-		!$this->owner->$fusionField ? $result->error("\"{$fusionField}\" required!") : (DataObject::get_one(get_class($this->owner), "ID != " . (int)$this->owner->ID . " AND Title = '" . Convert::raw2sql($this->owner->$fusionField) . "'") ? $result->error('Tag already exists!') : $result->valid());
+		$this->owner->$validate = strtolower($this->owner->$validate);
+		!$this->owner->$validate ? $result->error("\"{$validate}\" required!") : (DataObject::get_one($this->owner->ClassName, "ID != " . (int)$this->owner->ID . " AND Title = '" . Convert::raw2sql($this->owner->$validate) . "'") ? $result->error('Tag already exists!') : $result->valid());
 
 		// Allow extension customisation.
 
-		$this->owner->extend('validateFusionExtensionTag', $result);
+		$this->owner->extend('validateFusionExtension', $result);
 		return $result;
+	}
+
+	/**
+	 *	Make sure the associated fusion tag exists and has its tag types updated to reflect any changes.
+	 */
+
+	public function onAfterWrite() {
+
+		parent::onAfterWrite();
+
+		// Determine the field to validate, based on configuration that may have been defined.
+
+		$write = 'Title';
+		foreach(Config::inst()->get('FusionService', 'custom_tag_types') as $type => $field) {
+			if($type === $this->owner->ClassName) {
+				$write = $field;
+			}
+		}
+
+		// Determine whether there's an existing fusion tag.
+
+		$changed = $this->owner->getChangedFields();
+		if(isset($changed['ID']) && !($existing = FusionTag::get()->filter('Title', $this->owner->$write)->first())) {
+
+			// There was no fusion tag found, therefore create one from the existing tag.
+
+			$fusion = FusionTag::create();
+			$fusion->Title = $this->owner->$write;
+
+			// Determine the fusion tag type.
+
+			$fusion->TagTypes = serialize(array(
+				$this->owner->ClassName => $this->owner->ClassName
+			));
+			$fusion->write();
+
+			// Make sure this tag now has the associated fusion tag.
+
+			$this->owner->FusionTagID = $fusion->ID;
+			$this->owner->write();
+		}
+
+		// There was a fusion tag found, therefore append to the fusion tag types.
+
+		else if(isset($changed['ID']) && $existing) {
+			$types = unserialize($existing->TagTypes);
+			$types[$this->owner->ClassName] = $this->owner->ClassName;
+			$existing->TagTypes = serialize($types);
+			$existing->write();
+
+			// Make sure this tag now has the associated fusion tag.
+
+			$this->owner->FusionTagID = $existing->ID;
+			$this->owner->write();
+		}
+
+		// If this tag has been updated, reflect this change for the associated fusion tag.
+
+		else if(isset($changed[$write]) && ($existing = FusionTag::get()->byID($this->owner->FusionTagID))) {
+
+			// Update the existing fusion tag to match this tag.
+
+			$existing->Title = $changed[$write]['after'];
+			$existing->write();
+		}
+	}
+
+	/**
+	 *	Unlink this tag type from the associated fusion tag.
+	 */
+
+	public function onAfterDelete() {
+
+		parent::onAfterDelete();
+		$fusion = FusionTag::get()->byID($this->owner->FusionTagID);
+		$types = unserialize($fusion->TagTypes);
+		unset($types[$this->owner->ClassName]);
+		$fusion->TagTypes = serialize($types);
+		$fusion->write();
 	}
 
 }

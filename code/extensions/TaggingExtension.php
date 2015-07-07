@@ -1,10 +1,15 @@
 <?php
 
-// this extension will automatically be applied to pages, allowing tagging out of the box, however can also be applied to data objects
+/**
+ *	This extension will automatically be applied to site tree elements, and allows searchable content tagging.
+ *	@author Nathan Glasl <nathan@silverstripe.com.au>
+ */
 
 class TaggingExtension extends DataExtension {
 
-	// store tags in a database field to allow searching without needing to parse the many_many relationship
+	/**
+	 *	The tagging will be stored in a database field to allow searching without needing to parse the fusion tags relationship.
+	 */
 
 	private static $db = array(
 		'Tagging' => 'Text'
@@ -16,25 +21,30 @@ class TaggingExtension extends DataExtension {
 		'Tagging'
 	);
 
-	// use a separate tag name to avoid issues around merging many_many relationships based on priority
+	/**
+	 * The tagging will need to use a unique relationship name, otherwise issues around configuration merge priority will appear.
+	 */
 
 	private static $many_many = array(
 		'FusionTags' => 'FusionTag'
 	);
 
+	/**
+	 *	Display the appropriate fusion tag relationship field, but only when another form of tagging does not exist.
+	 */
+
 	public function updateCMSFields(FieldList $fields) {
 
-		$output = array();
-		foreach(singleton('FusionTag')->parseTags() as $tag => $field) {
-			$output[$tag] = $tag;
+		$types = array();
+		foreach(singleton('FusionService')->getFusionTagTypes() as $type => $field) {
+			$types[$type] = $type;
 		}
-		$intersect = array_intersect($this->owner->many_many(), $output);
 
-		// if there are no "fused" tags found in the many_many relationship, add the fusion tagging
+		// Determine whether no consolidated tags are found in the existing relationships.
 
-		if(empty($intersect)) {
+		if(empty(array_intersect($this->owner->many_many(), $types))) {
 
-			// allow tagging for the current page
+			// Allow content tagging.
 
 			$fields->addFieldToTab('Root.Tagging', ListboxField::create(
 				'FusionTags',
@@ -44,60 +54,54 @@ class TaggingExtension extends DataExtension {
 		}
 	}
 
+	/**
+	 *	Merge the new and existing tags into the fusion tags field, and populate the tagging database field for search purposes.
+	 */
+
 	public function onBeforeWrite() {
 
 		parent::onBeforeWrite();
-
-		// search for fusion tags that we can use for searching, retrieving the relationship names
-
-		$output = array();
-		foreach(singleton('FusionTag')->parseTags() as $tag => $field) {
-			$output[$tag] = $tag;
+		$types = array();
+		foreach(singleton('FusionService')->getFusionTagTypes() as $type => $field) {
+			$types[$type] = $type;
 		}
-		$intersect = array_intersect($this->owner->many_many(), $output);
 
-		// if there are no "fused" tags in place
+		// Determine whether no consolidated tags are found in the existing relationships.
 
-		if(empty($intersect)) {
+		$types = array_intersect($this->owner->many_many(), $types);
+		if(empty($types)) {
 
-			// store the fusion tagging in a database field to allow searching without needing to parse the many_many relationship
+			// Determine the tagging to be stored.
 
 			$tagging = array();
 			foreach($this->owner->FusionTags() as $tag) {
 				$tagging[] = $tag->Title;
 			}
-			$this->owner->Tagging = implode(' ', $tagging);
 		}
 
-		// if there are "fused" tags found in the many_many relationship, write these into Tagging and FusionTags, so we have a single search field
+		// There are consolidated tags found in the existing relationships.
 
 		else {
 
-			// clear the fusion tags out so we can keep it completely in sync
+			// Make sure the fusion tags are emptied to begin.
 
 			$this->owner->FusionTags()->removeAll();
 
-			// retrieve each relationship
+			// Retrieve each consolidated tag from the relationships.
 
 			$tagging = array();
-			foreach($intersect as $relationship => $tags) {
-
-				// retrieve each tag
-
+			foreach($types as $relationship => $type) {
 				foreach($this->owner->$relationship() as $tag) {
 
-					// retrieve the associated fusion tag and push this into Tags and FusionTags
+					// Determine the tagging to be stored.
 
 					$fusion = $tag->FusionTag();
 					$this->owner->FusionTags()->add($fusion);
 					$tagging[] = $fusion->Title;
 				}
 			}
-
-			// store the fusion tagging in a database field to allow searching without needing to parse the many_many relationship
-
-			$this->owner->Tagging = implode(' ', $tagging);
 		}
+		$this->owner->Tagging = implode(' ', $tagging);
 	}
 
 }
