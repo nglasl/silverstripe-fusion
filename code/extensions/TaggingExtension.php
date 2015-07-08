@@ -8,7 +8,7 @@
 class TaggingExtension extends DataExtension {
 
 	/**
-	 *	The tagging will be directly stored in a database field, allowing searching without needing to parse the fusion tags relationship.
+	 *	The tagging will be directly stored in a database field, allowing search without needing to parse the fusion tags relationship.
 	 */
 
 	private static $db = array(
