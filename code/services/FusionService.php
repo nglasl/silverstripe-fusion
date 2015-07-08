@@ -1,7 +1,7 @@
 <?php
 
 /**
- *	Determines the existing and configuration defined tag types to consolidate.
+ *	This provides functionality for the fusion module.
  *	@author Nathan Glasl <nathan@silverstripe.com.au>
  */
 
@@ -14,22 +14,21 @@ class FusionService {
 	private static $custom_tag_types = array();
 
 	/**
-	 *	Retrieve the fusion tag types to consolidate, searching for existing and configuration defined tag types.
+	 *	Determine the existing and configuration defined tag types to consolidate.
 	 *
 	 *	@return array(string, string)
 	 */
 
 	public function getFusionTagTypes() {
 
-		$types = array();
-
 		// Determine existing tag types.
 
+		$types = array();
 		$classes = ClassInfo::subclassesFor('DataObject');
 		unset($classes['FusionTag']);
 		foreach($classes as $class) {
 
-			// Determine which tag types to consolidate, based on data objects ending with "Tag".
+			// Determine the tag types to consolidate, based on data objects ending with "Tag".
 
 			if((strpos(strrev($class), strrev('Tag')) === 0)) {
 
@@ -39,14 +38,13 @@ class FusionService {
 			}
 		}
 
-		// Determine any other tag types to consolidate, based on configuration that may have been defined.
+		// Determine configuration defined tag types.
 
 		foreach(Config::inst()->get('FusionService', 'custom_tag_types') as $type => $field) {
 			if(in_array($type, $classes)) {
 
-				// Use the defined configuration field.
+				// Use the configuration defined field.
 
-				// if has field add it, otherwise use title
 				$types[$type] = $field;
 			}
 		}

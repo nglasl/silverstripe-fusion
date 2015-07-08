@@ -190,7 +190,7 @@ class FusionTag extends DataObject {
 
 				if((isset($changed['ID']) || isset($newTypes[$type])) && !($type::get()->filter($field, $this->Title)->first())) {
 
-					// There is no tag, therefore instantiate one using the fusion tag.
+					// There is no tag, therefore instantiate one using this fusion tag.
 
 					$tag = $type::create();
 					$tag->$field = $this->Title;
@@ -198,7 +198,7 @@ class FusionTag extends DataObject {
 					$tag->write();
 				}
 
-				// Determine whether the fusion tag has been updated.
+				// Determine whether this fusion tag has been updated.
 
 				else if(!isset($changed['ID']) && isset($changed['Title']) && ($existing = $type::get()->filter($field, $changed['Title']['before'])->first())) {
 
