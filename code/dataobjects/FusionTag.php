@@ -55,7 +55,7 @@ class FusionTag extends DataObject {
 						$fusionID = $existing->ID;
 					}
 
-					// Update the current fusion tag reference.
+					// Update the current tag to point to this.
 
 					$tag->FusionTagID = $fusionID;
 					$tag->write();
