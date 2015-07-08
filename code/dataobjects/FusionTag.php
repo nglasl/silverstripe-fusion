@@ -69,9 +69,6 @@ class FusionTag extends DataObject {
 
 	/**
 	 *	Restrict access when deleting fusion tags.
-	 *
-	 *	@parameter <{CURRENT_MEMBER}> member
-	 *	@return boolean
 	 */
 
 	public function canDelete($member = null) {
@@ -126,7 +123,12 @@ class FusionTag extends DataObject {
 
 		$result = parent::validate();
 		$this->Title = strtolower($this->Title);
-		!$this->Title ? $result->error('"Title" required!') : (FusionTag::get_one('FusionTag', "ID != " . (int)$this->ID . " AND Title = '" . Convert::raw2sql($this->Title) . "'") ? $result->error('Tag already exists!') : $result->valid());
+		if($result->valid() && !$this->Title) {
+			$result->error('"Title" required!');
+		}
+		else if($result->valid() && FusionTag::get_one('FusionTag', "ID != " . (int)$this->ID . " AND Title = '" . Convert::raw2sql($this->Title) . "'")) {
+			$result->error('Tag already exists!');
+		}
 		return $result;
 	}
 

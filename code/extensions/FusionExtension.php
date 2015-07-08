@@ -13,9 +13,6 @@ class FusionExtension extends DataExtension {
 
 	/**
 	 *	Restrict access when deleting tags.
-	 *
-	 *	@parameter <{CURRENT_MEMBER}> member
-	 *	@return boolean
 	 */
 
 	public function canDelete($member) {
@@ -54,7 +51,7 @@ class FusionExtension extends DataExtension {
 		if($result->valid() && !$this->owner->$validate) {
 			$result->error("\"{$validate}\" required!");
 		}
-		else if($result->valid() && $class::get_one($class, "ID != " . (int)$this->owner->ID . " AND Title = '" . Convert::raw2sql($this->owner->$validate) . "'")) {
+		else if($result->valid() && $class::get_one($class, "ID != " . (int)$this->owner->ID . " AND {$validate} = '" . Convert::raw2sql($this->owner->$validate) . "'")) {
 			$result->error('Tag already exists!');
 		}
 		return $result;
