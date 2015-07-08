@@ -12,6 +12,8 @@ class FusionTag extends DataObject {
 		'TagTypes' => 'Text'
 	);
 
+	private static $default_sort = 'Title';
+
 	private static $dependencies = array(
 		'service' => '%$FusionService'
 	);
