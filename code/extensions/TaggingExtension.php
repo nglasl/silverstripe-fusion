@@ -1,7 +1,7 @@
 <?php
 
 /**
- *	This extension will automatically be applied to site tree elements, and allows searchable content tagging.
+ *	This extension will automatically be applied to pages, and allows searchable content tagging.
  *	@author Nathan Glasl <nathan@silverstripe.com.au>
  */
 

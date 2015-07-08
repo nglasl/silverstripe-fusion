@@ -9,7 +9,7 @@ if(!defined('FUSION_PATH')) {
 	define('FUSION_PATH', rtrim(basename(dirname(__FILE__))));
 }
 
-// Apply the fusion tag extensions.
+// Apply the fusion extension to existing and configuration defined tag types.
 
 foreach(singleton('FusionService')->getFusionTagTypes() as $type => $field) {
 	Object::add_extension($type, 'FusionExtension');

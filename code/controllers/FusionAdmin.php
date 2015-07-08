@@ -1,7 +1,7 @@
 <?php
 
 /**
- *	CMS interface for creating, managing and consolidating content tagging.
+ *	The interface for creating, managing and consolidating tags.
  *	@author Nathan Glasl <nathan@silverstripe.com.au>
  */
 

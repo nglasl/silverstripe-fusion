@@ -1,7 +1,7 @@
 <?php
 
 /**
- *	This extension will automatically be applied to existing and configuration defined tag types, and will update the associated fusion tag to reflect changes.
+ *	This extension will automatically be applied to existing and configuration defined tag types, and will consolidate these into fusion tags.
  *	@author Nathan Glasl <nathan@silverstripe.com.au>
  */
 

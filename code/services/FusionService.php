@@ -1,7 +1,7 @@
 <?php
 
 /**
- *	Determines the fusion tag types to consolidate, while providing any additional functionality.
+ *	Determines the existing and configuration defined tag types to consolidate.
  *	@author Nathan Glasl <nathan@silverstripe.com.au>
  */
 
@@ -46,6 +46,7 @@ class FusionService {
 
 				// Use the defined configuration field.
 
+				// if has field add it, otherwise use title
 				$types[$type] = $field;
 			}
 		}

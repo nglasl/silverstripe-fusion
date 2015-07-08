@@ -1,7 +1,7 @@
 <?php
 
 /**
- *	Content tags that consolidate existing and configuration defined tag types.
+ *	Tags that consolidate existing and configuration defined tag types.
  *	@author Nathan Glasl <nathan@silverstripe.com.au>
  */
 
@@ -24,7 +24,7 @@ class FusionTag extends DataObject {
 
 		parent::requireDefaultRecords();
 
-		// Retrieve existing and configuration defined tags that don't have an associated fusion tag.
+		// Retrieve existing and configuration defined tag types that have not been consolidated.
 
 		foreach($this->service->getFusionTagTypes() as $type => $field) {
 			if(($tags = $type::get()->filter('FusionTagID', 0)) && $tags->exists()) {
@@ -34,44 +34,39 @@ class FusionTag extends DataObject {
 
 					if(!($existing = FusionTag::get()->filter('Title', $tag->$field)->first())) {
 
-						// There was no fusion tag found, therefore create one from the existing tag.
+						// There is no fusion tag, therefore instantiate one using the current tag.
 
 						$fusion = FusionTag::create();
 						$fusion->Title = $tag->$field;
-
-						// Determine the fusion tag type.
-
 						$fusion->TagTypes = serialize(array(
 							$tag->ClassName => $tag->ClassName
 						));
 						$fusion->write();
-
-						// Make sure the existing tag now has the associated fusion tag.
-
-						$tag->FusionTagID = $fusion->ID;
+						$fusionID = $fusion->ID;
 					}
 					else {
 
-						// There was a fusion tag found, therefore append to the fusion tag types.
+						// There is a fusion tag, therefore append the current tag type.
 
 						$types = unserialize($existing->TagTypes);
 						$types[$tag->ClassName] = $tag->ClassName;
 						$existing->TagTypes = serialize($types);
 						$existing->write();
-
-						// Make sure the existing tag now has the associated fusion tag.
-
-						$tag->FusionTagID = $existing->ID;
+						$fusionID = $existing->ID;
 					}
+
+					// Update the current fusion tag reference.
+
+					$tag->FusionTagID = $fusionID;
 					$tag->write();
-					DB::alteration_message("Fusion Tag {$tag->$field}", 'created');
+					DB::alteration_message("\"{$tag->$field}\" Fusion Tag", 'created');
 				}
 			}
 		}
 	}
 
 	/**
-	 *	Restrict access for CMS users deleting fusion tags.
+	 *	Restrict access when deleting fusion tags.
 	 *
 	 *	@parameter <{CURRENT_MEMBER}> member
 	 *	@return boolean
@@ -83,73 +78,69 @@ class FusionTag extends DataObject {
 	}
 
 	/**
-	 *	Display the appropriate CMS fusion tag fields.
+	 *	Display the appropriate fusion tag fields.
 	 */
 
 	public function getCMSFields() {
 
 		$fields = parent::getCMSFields();
 
-		// Allow customisation of types.
+		// Determine whether the tag types should be displayed.
 
 		$types = array();
 		foreach($this->service->getFusionTagTypes() as $type => $field) {
 			$types[$type] = $type;
 		}
-
-		// Determine whether the tag types should be displayed.
-
 		if(count($types)) {
+
+			// The serialised representation will require a custom field to display correctly.
+
 			$fields->replaceField('TagTypes', $list = ListboxField::create(
 				'Types',
 				'Tag Types',
 				$types
 			)->setMultiple(true));
 
-			// Disable any existing types to prevent deletion.
+			// Disable existing tag types to prevent deletion.
 
 			$items = is_string($this->TagTypes) ? array_keys(unserialize($this->TagTypes)) : array();
 			$list->setValue($items);
 			$list->setDisabledItems($items);
 		}
 		else {
+
+			// There are no existing or configuration defined tag types.
+
 			$fields->removeByName('TagTypes');
 		}
 		return $fields;
 	}
 
 	/**
-	 *	Confirm that the current fusion tag is valid.
+	 *	Confirm that the fusion tag has been given a title and doesn't already exist.
 	 */
 
 	public function validate() {
 
 		$result = parent::validate();
-
-		// Confirm that the current fusion tag has been given a title and doesn't already exist.
-
 		$this->Title = strtolower($this->Title);
 		!$this->Title ? $result->error('"Title" required!') : (FusionTag::get_one('FusionTag', "ID != " . (int)$this->ID . " AND Title = '" . Convert::raw2sql($this->Title) . "'") ? $result->error('Tag already exists!') : $result->valid());
-
-		// Allow extension customisation.
-
-		$this->extend('validateFusionTag', $result);
 		return $result;
 	}
 
 	/**
-	 *	Merge the new and existing tag types as a serialised representation.
+	 *	Update the tag types with a serialised representation.
 	 */
 
 	public function onBeforeWrite() {
 
 		parent::onBeforeWrite();
 
-		// Make sure new tag types exist.
+		// Determine whether new tag types exist.
 
 		if($this->Types) {
 
-			// Parse the new tag types and merge them with the existing tag types.
+			// Merge the new and existing tag types.
 
 			$types = explode(',', $this->Types);
 			if(is_string($this->TagTypes)) {
@@ -157,7 +148,7 @@ class FusionTag extends DataObject {
 			}
 			sort($types);
 
-			// Save the tag types as a serialised representation.
+			// Update the tag types with a serialised representation.
 
 			$formatted = array();
 			foreach($types as $type) {
@@ -165,25 +156,28 @@ class FusionTag extends DataObject {
 			}
 			$this->TagTypes = serialize($formatted);
 
-			// Make sure these go back into the tag types field, otherwise the edit form will not reflect the save.
+			// Update the custom field to reflect the change correctly.
 
 			$this->Types = array_keys($formatted);
 		}
 	}
 
 	/**
-	 *	Make sure the consolidated tag types also have their tags updated to reflect these changes.
+	 *	Update the existing and configuration defined tag types to reflect the change.
 	 */
 
 	public function onAfterWrite() {
 
 		parent::onAfterWrite();
+
+		// Determine the tag types to update.
+
 		$types = unserialize($this->TagTypes);
 		$changed = $this->getChangedFields();
 		foreach($this->service->getFusionTagTypes() as $type => $field) {
 			if(isset($types[$type])) {
 
-				// Determine the new tag types.
+				// Determine whether new tag types exist.
 
 				$newTypes = array();
 				if(isset($changed['TagTypes'])) {
@@ -192,11 +186,11 @@ class FusionTag extends DataObject {
 					$newTypes = is_array($before) ? array_diff($after, $before) : $after;
 				}
 
-				// Determine whether a tag of the relevant type already exists for a new fusion tag.
+				// Determine whether there's an existing tag.
 
 				if((isset($changed['ID']) || isset($newTypes[$type])) && !($type::get()->filter($field, $this->Title)->first())) {
 
-					// Create a new tag of the relevant type to match the fusion tag.
+					// There is no tag, therefore instantiate one using the fusion tag.
 
 					$tag = $type::create();
 					$tag->$field = $this->Title;
@@ -208,7 +202,7 @@ class FusionTag extends DataObject {
 
 				else if(!isset($changed['ID']) && isset($changed['Title']) && ($existing = $type::get()->filter($field, $changed['Title']['before'])->first())) {
 
-					// Update the existing tag of the relevant type to match the fusion tag.
+					// There is an update, therefore update the existing tag to reflect the change.
 
 					$existing->$field = $changed['Title']['after'];
 					$existing->write();
