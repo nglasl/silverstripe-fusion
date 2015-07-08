@@ -140,28 +140,26 @@ class FusionTag extends DataObject {
 
 		// Determine whether new tag types exist.
 
-		if($this->Types) {
+		$types = $this->Types ? explode(',', $this->Types) : array();
 
-			// Merge the new and existing tag types.
+		// Merge the new and existing tag types.
 
-			$types = explode(',', $this->Types);
-			if(is_string($this->TagTypes)) {
-				$types = array_merge($types, array_keys(unserialize($this->TagTypes)));
-			}
-			sort($types);
-
-			// Update the tag types with a serialised representation.
-
-			$formatted = array();
-			foreach($types as $type) {
-				$formatted[$type] = $type;
-			}
-			$this->TagTypes = serialize($formatted);
-
-			// Update the custom field to reflect the change correctly.
-
-			$this->Types = array_keys($formatted);
+		if(is_string($this->TagTypes)) {
+			$types = array_merge($types, array_keys(unserialize($this->TagTypes)));
 		}
+		sort($types);
+
+		// Update the tag types with a serialised representation.
+
+		$formatted = array();
+		foreach($types as $type) {
+			$formatted[$type] = $type;
+		}
+		$this->TagTypes = !empty($formatted) ? serialize($formatted) : null;
+
+		// Update the custom field to reflect the change correctly.
+
+		$this->Types = !empty($formatted) ? array_keys($formatted) : null;
 	}
 
 	/**
