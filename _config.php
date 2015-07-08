@@ -12,7 +12,7 @@ if(!defined('FUSION_PATH')) {
 // Apply the fusion extension to existing and configuration defined tag types.
 
 foreach(singleton('FusionService')->getFusionTagTypes() as $type => $field) {
-	Object::add_extension($type, 'FusionExtension');
+	$type::add_extension($type, 'FusionExtension');
 }
 
 // Update the current fusion admin icon.
