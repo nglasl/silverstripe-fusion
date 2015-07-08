@@ -1,14 +1,14 @@
 <?php
 
 /**
- *	This extension will automatically be applied to pages, and allows searchable content tagging.
+ *	This extension will automatically be applied to pages, allowing searchable content tagging.
  *	@author Nathan Glasl <nathan@silverstripe.com.au>
  */
 
 class TaggingExtension extends DataExtension {
 
 	/**
-	 *	The tagging will be stored in a database field to allow searching without needing to parse the fusion tags relationship.
+	 *	The tagging will be directly stored in a database field to allow searching without needing to parse the fusion tags relationship.
 	 */
 
 	private static $db = array(
@@ -22,7 +22,7 @@ class TaggingExtension extends DataExtension {
 	);
 
 	/**
-	 * The tagging will need to use a unique relationship name, otherwise issues around configuration merge priority will appear.
+	 *	The tagging will need to use a unique relationship name, otherwise there are issues around configuration merge priority.
 	 */
 
 	private static $many_many = array(
@@ -30,21 +30,20 @@ class TaggingExtension extends DataExtension {
 	);
 
 	/**
-	 *	Display the appropriate fusion tag relationship field, but only when another form of tagging does not exist.
+	 *	Display the appropriate tagging field.
 	 */
 
 	public function updateCMSFields(FieldList $fields) {
+
+		// Determine whether consolidated tags are found in the existing relationships.
 
 		$types = array();
 		foreach(singleton('FusionService')->getFusionTagTypes() as $type => $field) {
 			$types[$type] = $type;
 		}
-
-		// Determine whether no consolidated tags are found in the existing relationships.
-
 		if(empty(array_intersect($this->owner->many_many(), $types))) {
 
-			// Allow content tagging.
+			// There are no consolidated tags found, therefore instantiate a tagging field.
 
 			$fields->addFieldToTab('Root.Tagging', ListboxField::create(
 				'FusionTags',
@@ -55,45 +54,42 @@ class TaggingExtension extends DataExtension {
 	}
 
 	/**
-	 *	Merge the new and existing tags into the fusion tags field, and populate the tagging database field for search purposes.
+	 *	Update the tagging to reflect the change, allowing searchable content.
 	 */
 
 	public function onBeforeWrite() {
 
 		parent::onBeforeWrite();
+
+		// Determine whether consolidated tags are found in the existing relationships.
+
 		$types = array();
 		foreach(singleton('FusionService')->getFusionTagTypes() as $type => $field) {
 			$types[$type] = $type;
 		}
-
-		// Determine whether no consolidated tags are found in the existing relationships.
-
 		$types = array_intersect($this->owner->many_many(), $types);
 		if(empty($types)) {
 
-			// Determine the tagging to be stored.
+			// There are no consolidated tags found, therefore update the tagging based on the fusion tags.
 
 			$tagging = array();
 			foreach($this->owner->FusionTags() as $tag) {
 				$tagging[] = $tag->Title;
 			}
 		}
-
-		// There are consolidated tags found in the existing relationships.
-
 		else {
 
-			// Make sure the fusion tags are emptied to begin.
+			// Empty the fusion tags to begin.
 
 			$this->owner->FusionTags()->removeAll();
 
-			// Retrieve each consolidated tag from the relationships.
+			// There are consolidated tags found, therefore update the tagging based on these.
 
 			$tagging = array();
 			foreach($types as $relationship => $type) {
 				foreach($this->owner->$relationship() as $tag) {
 
-					// Determine the tagging to be stored.
+					// Update both the fusion tags and tagging.
 
 					$fusion = $tag->FusionTag();
 					$this->owner->FusionTags()->add($fusion);
