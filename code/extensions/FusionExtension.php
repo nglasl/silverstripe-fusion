@@ -51,7 +51,12 @@ class FusionExtension extends DataExtension {
 		// Confirm that the tag has been given a title and doesn't already exist.
 
 		$this->owner->$validate = strtolower($this->owner->$validate);
-		!$this->owner->$validate ? $result->error("\"{$validate}\" required!") : ($class::get_one($class, "ID != " . (int)$this->owner->ID . " AND Title = '" . Convert::raw2sql($this->owner->$validate) . "'") ? $result->error('Tag already exists!') : $result->valid());
+		if($result->valid() && !$this->owner->$validate) {
+			$result->error("\"{$validate}\" required!");
+		}
+		else if($result->valid() && $class::get_one($class, "ID != " . (int)$this->owner->ID . " AND Title = '" . Convert::raw2sql($this->owner->$validate) . "'")) {
+			$result->error('Tag already exists!');
+		}
 		return $result;
 	}
 
@@ -76,7 +81,8 @@ class FusionExtension extends DataExtension {
 		// Determine whether there's an existing fusion tag.
 
 		$changed = $this->owner->getChangedFields();
-		if(isset($changed['ID']) && !($existing = FusionTag::get()->filter('Title', $this->owner->$write)->first())) {
+		$existing = FusionTag::get()->filter('Title', $this->owner->$write)->first();
+		if(isset($changed['ID']) && !$existing) {
 
 			// There is no fusion tag, therefore instantiate one using this tag.
 
@@ -106,10 +112,32 @@ class FusionExtension extends DataExtension {
 			$this->owner->FusionTagID = $existing->ID;
 			$this->owner->write();
 		}
+		else if(isset($changed[$write]) && !isset($changed['FusionTagID']) && $existing && ($existing->ID !== $this->owner->FusionTagID)) {
+
+			// Update the fusion tag to remove this tag type.
+
+			$fusion = FusionTag::get()->byID($this->owner->FusionTagID);
+			$types = unserialize($fusion->TagTypes);
+			unset($types[$this->owner->ClassName]);
+			$fusion->TagTypes = !empty($types) ? serialize($types) : null;
+			$fusion->write();
+
+			// There is an existing fusion tag, therefore append this tag type.
+
+			$types = unserialize($existing->TagTypes);
+			$types[$class] = $class;
+			$existing->TagTypes = serialize($types);
+			$existing->write();
+
+			// Update this tag to point to the new fusion tag.
+
+			$this->owner->FusionTagID = $existing->ID;
+			$this->owner->write();
+		}
 
 		// Determine whether this tag has been updated.
 
-		else if(isset($changed[$write]) && ($existing = FusionTag::get()->byID($this->owner->FusionTagID))) {
+		else if(isset($changed[$write]) && !isset($changed['FusionTagID']) && ($existing = FusionTag::get()->byID($this->owner->FusionTagID))) {
 
 			// There is an update, therefore update the existing fusion tag to reflect the change.
 
@@ -128,7 +156,7 @@ class FusionExtension extends DataExtension {
 		$fusion = FusionTag::get()->byID($this->owner->FusionTagID);
 		$types = unserialize($fusion->TagTypes);
 		unset($types[$this->owner->ClassName]);
-		$fusion->TagTypes = serialize($types);
+		$fusion->TagTypes = !empty($types) ? serialize($types) : null;
 		$fusion->write();
 	}
 
