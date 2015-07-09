@@ -8,7 +8,7 @@
 class CMSMainTaggingExtension extends Extension {
 
 	/**
-	 *	Update the page filter display, allowing CMS searchable content tagging.
+	 *	Update the page filters, allowing CMS searchable content tagging.
 	 */
 
 	public function updateSearchForm($form) {
@@ -21,7 +21,7 @@ class CMSMainTaggingExtension extends Extension {
 			FusionTag::get()->map()->toArray()
 		)->setMultiple(true), 'q[Term]');
 
-		// Update the page filters, allowing tags to be parsed correctly.
+		// Update the page filters action, allowing tags to be parsed correctly.
 
 		$form->setFormAction(null);
 		$form->Actions()->replaceField('action_doSearch', FormAction::create(
@@ -31,7 +31,7 @@ class CMSMainTaggingExtension extends Extension {
 	}
 
 	/**
-	 *	Update the page filters, allowing tags to be parsed correctly.
+	 *	Apply the page filters, allowing tags to be parsed correctly.
 	 *
 	 *	@parameter <{SEARCH_FORM_DATA}> array
 	 */
@@ -46,11 +46,11 @@ class CMSMainTaggingExtension extends Extension {
 		if(isset($data['q']) && is_array($data['q'])) {
 			foreach($data['q'] as $filter => $value) {
 
-				// Determine whether tagging filters exist.
+				// Determine whether a tagging filter exists.
 
 				if($filter === 'Tagging' && is_array($value)) {
 
-					// Parse the tagging into a searchable format.
+					// Parse the tagging filter correctly.
 
 					$tagging = array();
 					foreach($value as $tag) {
