@@ -8,7 +8,7 @@
 class CMSMainTaggingExtension extends Extension {
 
 	/**
-	 *	Update the page filters, allowing CMS searchable content tagging.
+	 *	Update the page filter display, allowing CMS searchable content tagging.
 	 */
 
 	public function updateSearchForm($form) {
@@ -25,7 +25,7 @@ class CMSMainTaggingExtension extends Extension {
 
 		$form->setFormAction(null);
 		$form->Actions()->replaceField('action_doSearch', FormAction::create(
-			'updateSearchFilter',
+			'updateSearchFilters',
 			_t('CMSMain_left_ss.APPLY_FILTER', 'Apply Filter')
 		)->addExtraClass('ss-ui-action-constructive'));
 	}
@@ -36,14 +36,14 @@ class CMSMainTaggingExtension extends Extension {
 	 *	@parameter <{SEARCH_FORM_DATA}> array
 	 */
 
-	public function updateSearchFilter($data) {
+	public function updateSearchFilters($data) {
 
 		$link = $this->owner->Link();
 		$separator = '?';
 
 		// Determine whether page filters exist.
 
-		if(isset($data['q'])) {
+		if(isset($data['q']) && is_array($data['q'])) {
 			foreach($data['q'] as $filter => $value) {
 
 				// Determine whether tagging filters exist.
@@ -62,7 +62,7 @@ class CMSMainTaggingExtension extends Extension {
 					$value = implode(' ', $tagging);
 				}
 
-				// Append the filters to the URL.
+				// Append the page filters to the URL.
 
 				$link = HTTP::setGetVar("q[{$filter}]", $value, $link, $separator);
 				$separator = '&';
