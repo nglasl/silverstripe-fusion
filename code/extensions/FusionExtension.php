@@ -109,7 +109,7 @@ class FusionExtension extends DataExtension {
 			$this->owner->FusionTagID = $existing->ID;
 			$this->owner->write();
 		}
-		else if(isset($changed[$write]) && !isset($changed['FusionTagID']) && $existing && ($existing->ID !== $this->owner->FusionTagID)) {
+		else if(isset($changed[$write]) && !isset($changed['FusionTagID']) && $existing && ($existing->ID != $this->owner->FusionTagID)) {
 
 			// Update the fusion tag to remove this tag type.
 
