@@ -4,3 +4,6 @@ name: fusion-extensions
 SiteTree:
   extensions:
     - 'TaggingExtension'
+CMSMain:
+  extensions:
+    - 'CMSMainTaggingExtension'
