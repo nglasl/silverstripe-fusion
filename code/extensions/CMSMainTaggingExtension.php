@@ -25,7 +25,7 @@ class CMSMainTaggingExtension extends Extension {
 
 		$form->setFormAction(null);
 		$form->Actions()->replaceField('action_doSearch', FormAction::create(
-			'updateSearchFilters',
+			'pageFilter',
 			_t('CMSMain_left_ss.APPLY_FILTER', 'Apply Filter')
 		)->addExtraClass('ss-ui-action-constructive'));
 	}
@@ -36,7 +36,7 @@ class CMSMainTaggingExtension extends Extension {
 	 *	@parameter <{SEARCH_FORM_DATA}> array
 	 */
 
-	public function updateSearchFilters($data) {
+	public function pageFilter($data) {
 
 		$link = $this->owner->Link();
 		$separator = '?';
