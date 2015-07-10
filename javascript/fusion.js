@@ -4,15 +4,16 @@
 
 	$.entwine('ss', function($) {
 
-		// Trigger page filtering, allowing CMS searchable content tagging.
+		// Trigger the page filtering, allowing CMS searchable content tagging.
 
-		$('#pages-controller-cms-content .cms-search-form').entwine({
+		$('#pages-controller-cms-content form.cms-search-form').entwine({
 			onsubmit: function() {
 
 				// Determine the filtering, allowing multiples so tags are parsed correctly.
 
+				var form = $(this);
 				var filtering = {};
-				$.each($(this).find(":input[value!='']").serializeArray(), function(key, filter) {
+				$.each(form.find(":input[value!='']").serializeArray(), function(key, filter) {
 
 					filtering[filter.name] ? filtering[filter.name].push(filter.value) : filtering[filter.name] = [filter.value];
 				});
@@ -25,13 +26,13 @@
 					parameters.push(name.replace('[]', '') + '=' + value.join(' '));
 				});
 
-				// Construct the URL using these parameters, where encoding is required twice.
+				// Construct the URL using these parameters, where encoding is required twice to match the previous behaviour.
 
-				var url = encodeURI(encodeURI(this.attr('action') + '?' + parameters.join('&')));
+				var url = encodeURI(encodeURI(form.attr('action') + '?' + parameters.join('&')));
 
 				// Trigger the page filtering.
 
-				this.closest('.cms-container').loadPanel(url, "", {}, true);
+				form.closest('.cms-container').loadPanel(url, "", {}, true);
 				return false;
 			}
 		});
