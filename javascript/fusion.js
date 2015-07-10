@@ -26,7 +26,7 @@
 					parameters.push(name.replace('[]', '') + '=' + value.join(' '));
 				});
 
-				// Construct the URL using these parameters, where encoding is required twice to match the previous behaviour.
+				// Construct the URL, where encoding is required twice to match the previous behaviour.
 
 				var URL = encodeURI(encodeURI(form.attr('action') + '?' + parameters.join('&')));
 
