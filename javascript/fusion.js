@@ -28,11 +28,11 @@
 
 				// Construct the URL using these parameters, where encoding is required twice to match the previous behaviour.
 
-				var url = encodeURI(encodeURI(form.attr('action') + '?' + parameters.join('&')));
+				var URL = encodeURI(encodeURI(form.attr('action') + '?' + parameters.join('&')));
 
 				// Trigger the page filtering.
 
-				form.closest('.cms-container').loadPanel(url, "", {}, true);
+				form.closest('div.cms-container').loadPanel(URL, "", {}, true);
 				return false;
 			}
 		});
