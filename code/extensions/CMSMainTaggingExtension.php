@@ -19,12 +19,12 @@ class CMSMainTaggingExtension extends Extension {
 			'q[Tagging]',
 			'Tags',
 			FusionTag::get()->map('Title', 'Title')->toArray(),
-			(($filtering = $this->owner->getRequest()->getVar('q')) && isset($filtering['Tagging']) && is_string($filtering['Tagging'])) ? explode(' ', $filtering['Tagging']) : array(),
+			(($filtering = $this->owner->getRequest()->getVar('q')) && isset($filtering['Tagging'])) ? $filtering['Tagging'] : array(),
 			null,
 			true
 		), 'q[Term]');
 
-		// Update the page filtering, allowing tags to be parsed correctly.
+		// Update the page filtering, allowing multiple tags.
 
 		Requirements::javascript(FUSION_PATH . '/javascript/fusion.js');
 	}

@@ -9,26 +9,18 @@
 		$('#pages-controller-cms-content form.cms-search-form').entwine({
 			onsubmit: function() {
 
-				// Determine the filtering, allowing multiples so tags are parsed correctly.
+				// Determine the page filtering, allowing multiple tags.
 
 				var form = $(this);
-				var filtering = {};
+				var filtering = [];
 				$.each(form.find(":input[value!='']").serializeArray(), function(key, filter) {
 
-					filtering[filter.name] ? filtering[filter.name].push(filter.value) : filtering[filter.name] = [filter.value];
-				});
-
-				// Construct the URL parameters.
-
-				var parameters = [];
-				$.each(filtering, function(name, value) {
-
-					parameters.push(name.replace('[]', '') + '=' + value.join(' '));
+					filtering.push(filter.name + '=' + filter.value);
 				});
 
 				// Construct the URL, where encoding is required twice to match the previous behaviour.
 
-				var URL = encodeURI(encodeURI(form.attr('action') + '?' + parameters.join('&')));
+				var URL = encodeURI(encodeURI(form.attr('action') + '?' + filtering.join('&')));
 
 				// Trigger the page filtering.
 
