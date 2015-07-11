@@ -18,7 +18,7 @@
 					filtering.push(filter.name + '=' + filter.value);
 				});
 
-				// Construct the URL, where encoding is required twice to match the previous behaviour.
+				// Construct the URL, where "window.history" requires double encoding.
 
 				var URL = encodeURI(encodeURI(form.attr('action') + '?' + filtering.join('&')));
 
