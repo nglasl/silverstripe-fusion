@@ -43,7 +43,7 @@ The fusion tags are managed like any other data object, where tag types reflect 
 
 The fusion tags are immediately available to pages out of the box, allowing searchable content tagging for both content authors and users.
 
-To enable tagging for a custom data object:
+To enable tagging for a data object:
 
 ```yaml
 DataObjectName:
