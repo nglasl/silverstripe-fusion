@@ -41,7 +41,7 @@ The fusion tags are managed like any other data object, where tag types reflect 
 
 ![search](images/fusion-filtering.png)
 
-Tagging is immediately available to pages out of the box, allowing searchable tags that may also be filtered through the CMS. To enable tagging for a custom data object:
+Tagging is immediately available to pages out of the box, allowing searchable tags. To enable tagging for a custom data object:
 
 ```yaml
 DataObjectName:
