@@ -19,11 +19,11 @@ _The current release is **1.0.0**_
 
 ### Tags
 
-Tags will be automatically consolidated, based on data objects ending with `Tag`. To hook into this process, you may define the following configuration:
+These will be automatically consolidated, based on data objects ending with `Tag`. To further customise this process, you may define the following configuration:
 
 ```yaml
 FusionService:
-  custom_tags:
+  custom_tag_types:
     Tag: 'Field'
 ```
 
@@ -31,19 +31,21 @@ FusionService:
 
 ![management](images/fusion-management.png)
 
+The tags are managed like any other data object.
+
 ![tag](images/fusion-tag.png)
 
-The fusion tag types will reflect tags that were consolidated, and are defined to push changes out to those respective tags. This will help maintain any custom functionality or relationships that directly require the consolidated tags.
+The tag types will reflect existing tags that have been consolidated, and may be defined to push changes out to those respective tags. This is designed to maintain custom functionality that directly requires a consolidated tag.
 
 ### Searchable Content Tagging
 
 ![tagging](images/fusion-tagging.png)
 
-Tags may be added against pages out of the box, however the `TaggingExtension` may be applied to any data object. This will also instantiate a database field that is used for searching.
+This is available to pages out of the box. However you may add the `TaggingExtension` to custom data objects where required.
 
 ![search](images/fusion-search.png)
 
-Tags may also be filtered through the CMS.
+The search functionality is available to pages directly from the CMS.
 
 ## Maintainer Contact
 
