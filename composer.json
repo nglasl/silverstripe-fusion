@@ -1,6 +1,6 @@
 {
 	"name": "nglasl/silverstripe-fusion",
-	"description": "A module for SilverStripe which will automatically consolidate existing tags into new fusion tags, and allows searchable content tagging out of the box.",
+	"description": "A module for SilverStripe which will automatically consolidate existing tag types into new fusion tags, and allows searchable content tagging out of the box.",
 	"type": "silverstripe-module",
 	"keywords": [
 		"silverstripe",
