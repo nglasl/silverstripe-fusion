@@ -33,7 +33,7 @@ FusionService:
 
 ![tag](images/fusion-tag.png)
 
-The fusion tags are managed like any other data object, where tag types reflect those that have been consolidated. This pushes changes out to those respective tag types, maintaining any functionality which directly requires a tag that has been consolidated.
+The fusion tags are managed like any other data object, where tag types reflect those that have been consolidated. This pushes changes out to those respective tag types, maintaining any functionality directly requiring a tag that has been consolidated.
 
 ### Searchable Content Tagging
 
@@ -41,7 +41,7 @@ The fusion tags are managed like any other data object, where tag types reflect 
 
 ![search](images/fusion-filtering.png)
 
-The fusion tags are immediately available to pages out of the box, allowing searchable content tagging for both users and content authors.
+The fusion tags are immediately available to pages out of the box, allowing searchable content tagging for both content authors and users.
 
 To enable tagging for a custom data object:
 
