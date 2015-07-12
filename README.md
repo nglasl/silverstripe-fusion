@@ -39,7 +39,7 @@ The fusion tags are managed like any other data object, where tag types reflect 
 
 ![tagging](images/fusion-tagging.png)
 
-![search](images/fusion-filtering.png)
+![filtering](images/fusion-filtering.png)
 
 The fusion tags are immediately available to pages out of the box, allowing searchable content tagging for both content authors and users.
 
