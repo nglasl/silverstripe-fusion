@@ -24,7 +24,7 @@ These will be automatically consolidated, based on data objects ending with `Tag
 ```yaml
 FusionService:
   custom_tag_types:
-    Tag: 'Field'
+    TagName: 'Attribute'
 ```
 
 ### Management
@@ -39,12 +39,12 @@ The fusion tags are managed like any other data object, where tag types reflect 
 
 ![tagging](images/fusion-tagging.png)
 
-![search](images/fusion-search.png)
+![search](images/fusion-filter.png)
 
 Tagging is immediately available to pages out of the box, allowing searchable tags that may also be filtered through the CMS. To enable tagging for a custom data object:
 
 ```yaml
-Object:
+DataObjectName:
   extensions:
     - 'TaggingExtension'
 ```
