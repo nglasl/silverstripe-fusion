@@ -5,9 +5,10 @@
 	"keywords": [
 		"silverstripe",
 		"searchable",
-		"tag",
 		"tags",
-		"tagging"
+		"tagging",
+		"tag",
+		"search"
 	],
 	"homepage": "https://github.com/nglasl/silverstripe-fusion",
 	"license": "BSD-3-Clause",
