@@ -33,7 +33,7 @@ FusionService:
 
 ![tag](images/fusion-tag.png)
 
-The fusion tags are managed like any other data object, where tag types reflect those that have been consolidated, and are defined to push changes out to those respective tags. This is designed to maintain custom functionality that may directly require a consolidated tag.
+The fusion tags are managed like any other data object, where tag types reflect those that have been consolidated. This is designed to push changes out to those respective tag types, maintaining any functionality that directly requires a consolidated tag.
 
 ### Searchable Content Tagging
 
@@ -41,7 +41,13 @@ The fusion tags are managed like any other data object, where tag types reflect 
 
 ![search](images/fusion-search.png)
 
-This is immediately available to pages out of the box, where tagging may be filtered through the CMS. The `TaggingExtension` may be applied to custom data objects where required.
+Tagging is immediately available to pages out of the box, allowing searchable tags that may also be filtered through the CMS. To enable tagging for a custom data object:
+
+```yaml
+Object:
+  extensions:
+    - 'TaggingExtension'
+```
 
 ## Maintainer Contact
 
