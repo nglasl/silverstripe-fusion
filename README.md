@@ -19,7 +19,7 @@ _The current release is **1.0.0**_
 
 ### Tags
 
-These will be automatically consolidated, based on data objects ending with `Tag`. To further customise this process, you may define the following configuration:
+These will be automatically consolidated into fusion tags, based on data objects ending with `Tag`. To further customise this process, you may define the following configuration:
 
 ```yaml
 FusionService:
@@ -33,7 +33,7 @@ FusionService:
 
 ![tag](images/fusion-tag.png)
 
-The fusion tags are managed like any other data object, where tag types reflect those that have been consolidated. This is designed to push changes out to those respective tag types, maintaining any functionality that directly requires a tag that has been consolidated.
+The fusion tags are managed like any other data object, where tag types reflect those that have been consolidated. This has been designed to push changes out to those respective tag types, maintaining any functionality which directly requires a tag that has been consolidated.
 
 ### Searchable Content Tagging
 
@@ -41,7 +41,7 @@ The fusion tags are managed like any other data object, where tag types reflect 
 
 ![search](images/fusion-filtering.png)
 
-The fusion tags are immediately available to pages out of the box, and allows searchable content tagging for both users and content authors.
+The fusion tags are immediately available to pages out of the box, allowing searchable content tagging for both users and content authors.
 
 To enable tagging for a custom data object:
 
