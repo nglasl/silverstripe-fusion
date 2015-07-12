@@ -19,7 +19,7 @@ _The current release is **1.0.0**_
 
 ### Tags
 
-These will be automatically consolidated into fusion tags, based on data objects ending with `Tag`. To further customise this process, you may define the following configuration:
+These will be automatically consolidated, based on data objects ending with `Tag`. To further customise this process, you may define the following configuration:
 
 ```yaml
 FusionService:
