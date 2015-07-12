@@ -33,7 +33,7 @@ FusionService:
 
 ![tag](images/fusion-tag.png)
 
-The fusion tags are managed like any other data object, where tag types reflect those that have been consolidated. This has been designed to push changes out to those respective tag types, maintaining any functionality which directly requires a tag that has been consolidated.
+The fusion tags are managed like any other data object, where tag types reflect those that have been consolidated. This pushes changes out to those respective tag types, maintaining any functionality which directly requires a tag that has been consolidated.
 
 ### Searchable Content Tagging
 
