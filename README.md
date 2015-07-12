@@ -27,13 +27,13 @@ FusionService:
     TagName: 'Attribute'
 ```
 
-### Management
+### Tag Management
 
 ![management](images/fusion-management.png)
 
 ![tag](images/fusion-tag.png)
 
-The fusion tags are managed like any other data object, where tag types reflect those that have been consolidated. This is designed to push changes out to those respective tag types, maintaining any functionality that directly requires a consolidated tag.
+The fusion tags are managed like any other data object, where tag types reflect those that have been consolidated. This is designed to push changes out to those respective tag types, maintaining any functionality that directly requires a tag that has been consolidated.
 
 ### Searchable Content Tagging
 
@@ -41,7 +41,9 @@ The fusion tags are managed like any other data object, where tag types reflect 
 
 ![search](images/fusion-filtering.png)
 
-Tagging is immediately available to pages out of the box, allowing searchable tags. To enable tagging for a custom data object:
+Tagging is immediately available to pages out of the box, and allows searchable content tagging from both user and content author perspectives.
+
+To enable tagging for a custom data object:
 
 ```yaml
 DataObjectName:
