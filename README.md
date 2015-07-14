@@ -29,7 +29,7 @@ FusionService:
 
 ### Tag Management
 
-![management](images/fusion-management.png)
+![management](https://raw.githubusercontent.com/nglasl/silverstripe-fusion/master/images/fusion-management.png)
 
 ![tag](images/fusion-tag.png)
 
