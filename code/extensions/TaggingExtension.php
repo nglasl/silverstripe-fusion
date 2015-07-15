@@ -55,7 +55,7 @@ class TaggingExtension extends DataExtension {
 
 		// Allow extension.
 
-		$this->owner->extend('updateTaggingExtensionCMSFields');
+		$this->owner->extend('updateTaggingExtensionCMSFields', $fields);
 	}
 
 	/**
