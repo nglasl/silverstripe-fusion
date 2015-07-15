@@ -112,6 +112,10 @@ class FusionTag extends DataObject {
 
 			$fields->removeByName('TagTypes');
 		}
+
+		// Allow extension.
+
+		$this->extend('updateFusionTagCMSFields', $fields);
 		return $fields;
 	}
 
@@ -129,6 +133,10 @@ class FusionTag extends DataObject {
 		else if($result->valid() && FusionTag::get_one('FusionTag', "ID != " . (int)$this->ID . " AND Title = '" . Convert::raw2sql($this->Title) . "'")) {
 			$result->error('Tag already exists!');
 		}
+
+		// Allow extension.
+
+		$this->extend('validateFusionTag', $result);
 		return $result;
 	}
 

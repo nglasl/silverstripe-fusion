@@ -54,6 +54,10 @@ class FusionExtension extends DataExtension {
 		else if($result->valid() && $class::get_one($class, "ID != " . (int)$this->owner->ID . " AND {$validate} = '" . Convert::raw2sql($this->owner->$validate) . "'")) {
 			$result->error('Tag already exists!');
 		}
+
+		// Allow extension.
+
+		$this->owner->extend('validateFusionExtension', $result);
 		return $result;
 	}
 

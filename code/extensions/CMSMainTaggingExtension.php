@@ -27,6 +27,10 @@ class CMSMainTaggingExtension extends Extension {
 		// Update the page filtering, allowing multiple tags.
 
 		Requirements::javascript(FUSION_PATH . '/javascript/fusion.js');
+
+		// Allow extension.
+
+		$this->owner->extend('updateCMSMainTaggingExtensionSearchForm', $form);
 	}
 
 }
