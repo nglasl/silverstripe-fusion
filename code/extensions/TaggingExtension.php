@@ -52,6 +52,10 @@ class TaggingExtension extends DataExtension {
 				FusionTag::get()->map()->toArray()
 			)->setMultiple(true));
 		}
+
+		// Allow extension.
+
+		$this->owner->extend('updateTaggingExtensionCMSFields');
 	}
 
 	/**
