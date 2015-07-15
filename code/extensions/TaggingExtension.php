@@ -41,7 +41,8 @@ class TaggingExtension extends DataExtension {
 		foreach(singleton('FusionService')->getFusionTagTypes() as $type => $field) {
 			$types[$type] = $type;
 		}
-		if(empty(array_intersect($this->owner->many_many(), $types))) {
+		$types = array_intersect($this->owner->many_many(), $types);
+		if(empty($types)) {
 
 			// There are no consolidated tags found, therefore instantiate a tagging field.
 
