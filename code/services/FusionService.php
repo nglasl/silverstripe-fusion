@@ -71,7 +71,7 @@ class FusionService {
 			$extensions = $configuration->get($class, 'extensions', Config::UNINHERITED);
 			if(is_array($extensions) && in_array('TaggingExtension', $extensions)) {
 
-				// Determine whether this fusion tag is being used on staging.
+				// Determine whether this fusion tag is being used.
 
 				$mode = Versioned::get_reading_mode();
 				Versioned::reading_stage('Stage');
