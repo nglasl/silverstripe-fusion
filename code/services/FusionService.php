@@ -95,6 +95,7 @@ class FusionService {
 						if($live = $class::get()->byID($object->ID)) {
 							$live->writeWithoutVersion();
 						}
+						Versioned::reading_stage('Stage');
 					}
 				}
 				else {
