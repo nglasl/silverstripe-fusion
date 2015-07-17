@@ -51,4 +51,63 @@ class FusionService {
 		return $types;
 	}
 
+	/**
+	 *	Update the searchable content tagging for a specific fusion tag.
+	 *
+	 *	@parameter <{FUSION_TAG_ID}> integer
+	 */
+
+	public function updateTagging($fusionID) {
+
+		// Determine any data objects with the tagging extension.
+
+		$classes = ClassInfo::subclassesFor('DataObject');
+		unset($classes['DataObject']);
+		$configuration = Config::inst();
+		foreach($classes as $class) {
+
+			// Determine the specific data object extensions.
+
+			$extensions = $configuration->get($class, 'extensions', Config::UNINHERITED);
+			if(is_array($extensions) && in_array('TaggingExtension', $extensions)) {
+
+				// Determine whether this fusion tag is being used on staging.
+
+				$mode = Versioned::get_reading_mode();
+				Versioned::reading_stage('Stage');
+				$objects = $class::get()->filter('FusionTags.ID', $fusionID);
+
+				// Update the searchable content tagging for these data objects.
+
+				if($class::has_extension($class, 'Versioned')) {
+
+					// These data objects are versioned.
+
+					foreach($objects as $object) {
+
+						// Update the staging version.
+
+						$object->writeWithoutVersion();
+
+						// Update the live version.
+
+						Versioned::reading_stage('Live');
+						if($live = $class::get()->byID($object->ID)) {
+							$live->writeWithoutVersion();
+						}
+					}
+				}
+				else {
+
+					// These data objects are not versioned.
+
+					foreach($objects as $object) {
+						$object->write();
+					}
+				}
+				Versioned::set_reading_mode($mode);
+			}
+		}
+	}
+
 }

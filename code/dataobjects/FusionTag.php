@@ -212,7 +212,7 @@ class FusionTag extends DataObject {
 
 				// Determine whether this fusion tag has been updated.
 
-				else if(!isset($changed['ID']) && isset($changed['Title']) && ($existing = $type::get()->filter($field, $changed['Title']['before'])->first())) {
+				else if(!isset($changed['ID']) && isset($changed['Title']) && ($existing = $type::get()->filter('FusionTagID', $this->ID)->first())) {
 
 					// There is an update, therefore update the existing tag to reflect the change.
 
@@ -220,6 +220,12 @@ class FusionTag extends DataObject {
 					$existing->write();
 				}
 			}
+		}
+
+		// Update the searchable content tagging for this fusion tag.
+
+		if(!isset($changed['ID']) && isset($changed['Title'])) {
+			$this->service->updateTagging($this->ID);
 		}
 	}
 
