@@ -88,14 +88,14 @@ class FusionService {
 						// Update the staging version.
 
 						$object->writeWithoutVersion();
+					}
+					Versioned::reading_stage('Live');
+					$objects = $class::get()->filter('FusionTags.ID', $fusionID);
+					foreach($objects as $object) {
 
 						// Update the live version.
 
-						Versioned::reading_stage('Live');
-						if($live = $class::get()->byID($object->ID)) {
-							$live->writeWithoutVersion();
-						}
-						Versioned::reading_stage('Stage');
+						$object->writeWithoutVersion();
 					}
 				}
 				else {
