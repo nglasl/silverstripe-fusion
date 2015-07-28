@@ -15,12 +15,6 @@ class TaggingExtension extends DataExtension {
 		'Tagging' => 'Text'
 	);
 
-	private static $searchable_fields = array(
-		'Title',
-		'Content',
-		'Tagging'
-	);
-
 	/**
 	 *	The tagging will need to use a unique relationship name, otherwise there are issues around configuration merge priority.
 	 */
@@ -28,6 +22,34 @@ class TaggingExtension extends DataExtension {
 	private static $many_many = array(
 		'FusionTags' => 'FusionTag'
 	);
+
+	/**
+	 *	Update the searchable fields and model admin filtering, allowing CMS searchable content tagging.
+	 */
+
+	public function updateSearchableFields(&$fields) {
+
+		// Instantiate a field containing the existing tags.
+
+		$fields = array_merge(array(
+			'Tagging' => array(
+				'field' => ListboxField::create(
+					'Tagging',
+					'Tags',
+					FusionTag::get()->map('Title', 'Title')->toArray(),
+					(($filtering = Controller::curr()->getRequest()->getVar('q')) && isset($filtering['Tagging'])) ? $filtering['Tagging'] : array(),
+					null,
+					true
+				),
+				'title' => 'Tags',
+				'filter' => $this->owner->dbObject('Tagging')->stat('default_search_filter_class')
+			)
+		), $fields);
+
+		// Allow extension.
+
+		$this->owner->extend('updateTaggingExtensionSearchableFields', $fields);
+	}
 
 	/**
 	 *	Display the appropriate tagging field.
