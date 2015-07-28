@@ -57,6 +57,8 @@ class TaggingExtension extends DataExtension {
 
 	public function updateCMSFields(FieldList $fields) {
 
+		$fields->removeByName('FusionTags');
+
 		// Determine whether consolidated tags are found in the existing relationships.
 
 		$types = array();
