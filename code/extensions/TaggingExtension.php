@@ -33,6 +33,7 @@ class TaggingExtension extends DataExtension {
 
 		$fields = array_merge(array(
 			'Tagging' => array(
+				'title' => 'Tags',
 				'field' => ListboxField::create(
 					'Tagging',
 					'Tags',
@@ -41,7 +42,6 @@ class TaggingExtension extends DataExtension {
 					null,
 					true
 				),
-				'title' => 'Tags',
 				'filter' => $this->owner->dbObject('Tagging')->stat('default_search_filter_class')
 			)
 		), $fields);
