@@ -5,32 +5,33 @@
  *	@author Nathan Glasl <nathan@silverstripe.com.au>
  */
 
-class CMSMainTaggingExtension extends Extension {
+class CMSMainTaggingExtension extends Extension
+{
 
-	/**
-	 *	Update the page filtering, allowing CMS searchable content tagging.
-	 */
+    /**
+     *	Update the page filtering, allowing CMS searchable content tagging.
+     */
 
-	public function updateSearchForm($form) {
+    public function updateSearchForm($form)
+    {
 
-		// Instantiate a field containing the existing tags.
+        // Instantiate a field containing the existing tags.
 
-		$form->Fields()->insertBefore(ListboxField::create(
-			'q[Tagging]',
-			'Tags',
-			FusionTag::get()->map('Title', 'Title')->toArray(),
-			(($filtering = $this->owner->getRequest()->getVar('q')) && isset($filtering['Tagging'])) ? $filtering['Tagging'] : array(),
-			null,
-			true
-		), 'q[Term]');
+        $form->Fields()->insertBefore(ListboxField::create(
+            'q[Tagging]',
+            'Tags',
+            FusionTag::get()->map('Title', 'Title')->toArray(),
+            (($filtering = $this->owner->getRequest()->getVar('q')) && isset($filtering['Tagging'])) ? $filtering['Tagging'] : array(),
+            null,
+            true
+        ), 'q[Term]');
 
-		// Update the page filtering, allowing multiple tags.
+        // Update the page filtering, allowing multiple tags.
 
-		Requirements::javascript(FUSION_PATH . '/javascript/fusion.js');
+        Requirements::javascript(FUSION_PATH . '/javascript/fusion.js');
 
-		// Allow extension.
+        // Allow extension.
 
-		$this->owner->extend('updateCMSMainTaggingExtensionSearchForm', $form);
-	}
-
+        $this->owner->extend('updateCMSMainTaggingExtensionSearchForm', $form);
+    }
 }
