@@ -5,128 +5,128 @@
  *	@author Nathan Glasl <nathan@silverstripe.com.au>
  */
 
-class TaggingExtension extends DataExtension {
+class TaggingExtension extends DataExtension
+{
 
-	/**
-	 *	The tagging will be directly stored in a database field, allowing search without needing to parse the fusion tags relationship.
-	 */
+    /**
+     *	The tagging will be directly stored in a database field, allowing search without needing to parse the fusion tags relationship.
+     */
 
-	private static $db = array(
-		'Tagging' => 'Text'
-	);
+    private static $db = array(
+        'Tagging' => 'Text'
+    );
 
-	/**
-	 *	The tagging will need to use a unique relationship name, otherwise there are issues around configuration merge priority.
-	 */
+    /**
+     *	The tagging will need to use a unique relationship name, otherwise there are issues around configuration merge priority.
+     */
 
-	private static $many_many = array(
-		'FusionTags' => 'FusionTag'
-	);
+    private static $many_many = array(
+        'FusionTags' => 'FusionTag'
+    );
 
-	/**
-	 *	Update the searchable fields and model admin filtering, allowing CMS searchable content tagging.
-	 */
+    /**
+     *	Update the searchable fields and model admin filtering, allowing CMS searchable content tagging.
+     */
 
-	public function updateSearchableFields(&$fields) {
+    public function updateSearchableFields(&$fields)
+    {
 
-		// Instantiate a field containing the existing tags.
+        // Instantiate a field containing the existing tags.
 
-		$fields = array_merge(array(
-			'Tagging' => array(
-				'title' => 'Tags',
-				'field' => ListboxField::create(
-					'Tagging',
-					'Tags',
-					FusionTag::get()->map('Title', 'Title')->toArray(),
-					(($filtering = Controller::curr()->getRequest()->getVar('q')) && isset($filtering['Tagging'])) ? $filtering['Tagging'] : array(),
-					null,
-					true
-				),
-				'filter' => $this->owner->dbObject('Tagging')->stat('default_search_filter_class')
-			)
-		), $fields);
+        $fields = array_merge(array(
+            'Tagging' => array(
+                'title' => 'Tags',
+                'field' => ListboxField::create(
+                    'Tagging',
+                    'Tags',
+                    FusionTag::get()->map('Title', 'Title')->toArray(),
+                    (($filtering = Controller::curr()->getRequest()->getVar('q')) && isset($filtering['Tagging'])) ? $filtering['Tagging'] : array(),
+                    null,
+                    true
+                ),
+                'filter' => $this->owner->dbObject('Tagging')->stat('default_search_filter_class')
+            )
+        ), $fields);
 
-		// Allow extension.
+        // Allow extension.
 
-		$this->owner->extend('updateTaggingExtensionSearchableFields', $fields);
-	}
+        $this->owner->extend('updateTaggingExtensionSearchableFields', $fields);
+    }
 
-	/**
-	 *	Display the appropriate tagging field.
-	 */
+    /**
+     *	Display the appropriate tagging field.
+     */
 
-	public function updateCMSFields(FieldList $fields) {
+    public function updateCMSFields(FieldList $fields)
+    {
+        $fields->removeByName('FusionTags');
 
-		$fields->removeByName('FusionTags');
+        // Determine whether consolidated tags are found in the existing relationships.
 
-		// Determine whether consolidated tags are found in the existing relationships.
+        $types = array();
+        foreach (singleton('FusionService')->getFusionTagTypes() as $type => $field) {
+            $types[$type] = $type;
+        }
+        $types = array_intersect($this->owner->many_many(), $types);
+        if (empty($types)) {
 
-		$types = array();
-		foreach(singleton('FusionService')->getFusionTagTypes() as $type => $field) {
-			$types[$type] = $type;
-		}
-		$types = array_intersect($this->owner->many_many(), $types);
-		if(empty($types)) {
+            // There are no consolidated tags found, therefore instantiate a tagging field.
 
-			// There are no consolidated tags found, therefore instantiate a tagging field.
+            $fields->addFieldToTab('Root.Tagging', ListboxField::create(
+                'FusionTags',
+                'Tags',
+                FusionTag::get()->map()->toArray()
+            )->setMultiple(true));
+        }
 
-			$fields->addFieldToTab('Root.Tagging', ListboxField::create(
-				'FusionTags',
-				'Tags',
-				FusionTag::get()->map()->toArray()
-			)->setMultiple(true));
-		}
+        // Allow extension.
 
-		// Allow extension.
+        $this->owner->extend('updateTaggingExtensionCMSFields', $fields);
+    }
 
-		$this->owner->extend('updateTaggingExtensionCMSFields', $fields);
-	}
+    /**
+     *	Update the tagging to reflect the change, allowing searchable content.
+     */
 
-	/**
-	 *	Update the tagging to reflect the change, allowing searchable content.
-	 */
+    public function onBeforeWrite()
+    {
+        parent::onBeforeWrite();
 
-	public function onBeforeWrite() {
+        // Determine whether consolidated tags are found in the existing relationships.
 
-		parent::onBeforeWrite();
+        $types = array();
+        foreach (singleton('FusionService')->getFusionTagTypes() as $type => $field) {
+            $types[$type] = $type;
+        }
+        $types = array_intersect($this->owner->many_many(), $types);
+        if (empty($types)) {
 
-		// Determine whether consolidated tags are found in the existing relationships.
+            // There are no consolidated tags found, therefore update the tagging based on the fusion tags.
 
-		$types = array();
-		foreach(singleton('FusionService')->getFusionTagTypes() as $type => $field) {
-			$types[$type] = $type;
-		}
-		$types = array_intersect($this->owner->many_many(), $types);
-		if(empty($types)) {
+            $tagging = array();
+            foreach ($this->owner->FusionTags() as $tag) {
+                $tagging[] = $tag->Title;
+            }
+        } else {
 
-			// There are no consolidated tags found, therefore update the tagging based on the fusion tags.
+            // Empty the fusion tags to begin.
 
-			$tagging = array();
-			foreach($this->owner->FusionTags() as $tag) {
-				$tagging[] = $tag->Title;
-			}
-		}
-		else {
+            $this->owner->FusionTags()->removeAll();
 
-			// Empty the fusion tags to begin.
+            // There are consolidated tags found, therefore update the tagging based on these.
 
-			$this->owner->FusionTags()->removeAll();
+            $tagging = array();
+            foreach ($types as $relationship => $type) {
+                foreach ($this->owner->$relationship() as $tag) {
 
-			// There are consolidated tags found, therefore update the tagging based on these.
+                    // Update both the fusion tags and tagging.
 
-			$tagging = array();
-			foreach($types as $relationship => $type) {
-				foreach($this->owner->$relationship() as $tag) {
-
-					// Update both the fusion tags and tagging.
-
-					$fusion = $tag->FusionTag();
-					$this->owner->FusionTags()->add($fusion);
-					$tagging[] = $fusion->Title;
-				}
-			}
-		}
-		$this->owner->Tagging = implode(' ', $tagging);
-	}
-
+                    $fusion = $tag->FusionTag();
+                    $this->owner->FusionTags()->add($fusion);
+                    $tagging[] = $fusion->Title;
+                }
+            }
+        }
+        $this->owner->Tagging = implode(' ', $tagging);
+    }
 }
