@@ -13,6 +13,10 @@ class CMSMainTaggingExtension extends Extension {
 
 	public function updateSearchForm($form) {
 
+		// Update the page filtering, allowing multiple tags.
+
+		Requirements::javascript(FUSION_PATH . '/javascript/fusion.js');
+
 		// Instantiate a field containing the existing tags.
 
 		$form->Fields()->insertBefore(ListboxField::create(
@@ -23,10 +27,6 @@ class CMSMainTaggingExtension extends Extension {
 			null,
 			true
 		), 'q[Term]');
-
-		// Update the page filtering, allowing multiple tags.
-
-		Requirements::javascript(FUSION_PATH . '/javascript/fusion.js');
 
 		// Allow extension.
 
