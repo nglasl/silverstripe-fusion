@@ -1,6 +1,6 @@
 # [fusion](https://packagist.org/packages/nglasl/silverstripe-fusion)
 
-_The current release is **1.0.4**_
+_The current release is **1.0.5**_
 
 	A module for SilverStripe which will automatically consolidate existing tag types
 	into new fusion tags, and allows searchable content tagging out of the box.
