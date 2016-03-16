@@ -83,7 +83,7 @@ class FusionExtension extends DataExtension {
 
 		$changed = $this->owner->getChangedFields();
 		$existing = FusionTag::get()->filter('Title', $this->owner->$write)->first();
-		if(isset($changed['ID']) && !$existing) {
+		if(is_null($this->owner->FusionTagID) && !$existing) {
 
 			// There is no fusion tag, therefore instantiate one using this tag.
 
@@ -99,7 +99,7 @@ class FusionExtension extends DataExtension {
 			$this->owner->FusionTagID = $fusion->ID;
 			$this->owner->write();
 		}
-		else if(isset($changed['ID']) && $existing) {
+		else if(is_null($this->owner->FusionTagID) && $existing) {
 
 			// There is a fusion tag, therefore append this tag type.
 
