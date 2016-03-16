@@ -130,7 +130,10 @@ class FusionTag extends DataObject {
 		if($result->valid() && !$this->Title) {
 			$result->error('"Title" required!');
 		}
-		else if($result->valid() && FusionTag::get_one('FusionTag', "ID != " . (int)$this->ID . " AND Title = '" . Convert::raw2sql($this->Title) . "'")) {
+		else if($result->valid() && FusionTag::get_one('FusionTag', array(
+			'ID != ?' => $this->ID,
+			'Title = ?' => $this->Title
+		))) {
 			$result->error('Tag already exists!');
 		}
 
