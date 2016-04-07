@@ -30,7 +30,7 @@ class FusionService {
 
 			// Determine the tag types to consolidate, based on data objects ending with "Tag".
 
-			if((strpos(strrev($class), strrev('Tag')) === 0)) {
+			if((strpos(strrev($class), strrev('Tag')) === 0) && !ClassInfo::classImplements($class, 'TestOnly')) {
 
 				// Use the title field as a default.
 
