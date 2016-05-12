@@ -40,7 +40,7 @@ The fusion tags are managed like any other data object, where tag types reflect 
 
 ![filtering](https://raw.githubusercontent.com/nglasl/silverstripe-fusion/master/images/fusion-filtering.png)
 
-The fusion tags are immediately available to pages out of the box, allowing searchable content tagging (using a `Tagging` database field) for both content authors and users.
+The fusion tags are immediately available to pages out of the box, allowing searchable content tagging (using a `Tagging` field) for both content authors and users.
 
 To enable tagging for a data object:
 
