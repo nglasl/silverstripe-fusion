@@ -1,9 +1,8 @@
 # [fusion](https://packagist.org/packages/nglasl/silverstripe-fusion)
 
-_The current release is **1.1.2**_
+_The current release is **1.1.3**_
 
-	A module for SilverStripe which will automatically consolidate existing tag types
-	into new fusion tags, and allows searchable content tagging out of the box.
+> A module for SilverStripe which will automatically consolidate existing tag types into new fusion tags, and allows searchable content tagging out of the box.
 
 ## Requirement
 
@@ -41,7 +40,7 @@ The fusion tags are managed like any other data object, where tag types reflect 
 
 ![filtering](https://raw.githubusercontent.com/nglasl/silverstripe-fusion/master/images/fusion-filtering.png)
 
-The fusion tags are immediately available to pages out of the box, allowing searchable content tagging for both content authors and users.
+The fusion tags are immediately available to pages out of the box, allowing searchable content tagging (using a `Tagging` database field) for both content authors and users.
 
 To enable tagging for a data object:
 
