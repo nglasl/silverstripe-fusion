@@ -26,9 +26,46 @@ class FusionTag extends DataObject {
 
 		parent::requireDefaultRecords();
 
-		// Determine the existing and configuration defined tag types to consolidate.
+		// Retrieve existing and configuration defined tag types that have not been consolidated.
 
 		$types = $this->service->getFusionTagTypes();
+		foreach($types as $type => $field) {
+			if(($tags = $type::get()->filter('FusionTagID', 0)) && $tags->exists()) {
+				foreach($tags as $tag) {
+
+					// Determine whether there's an existing fusion tag.
+
+					if(!($existing = FusionTag::get()->filter('Title', $tag->$field)->first())) {
+
+						// There is no fusion tag, therefore instantiate one using the current tag.
+
+						$fusion = FusionTag::create();
+						$fusion->Title = $tag->$field;
+						$fusion->TagTypes = serialize(array(
+							$tag->ClassName => $tag->ClassName
+						));
+						$fusion->write();
+						$fusionID = $fusion->ID;
+					}
+					else {
+
+						// There is a fusion tag, therefore append the current tag type.
+
+						$existingTypes = unserialize($existing->TagTypes);
+						$existingTypes[$tag->ClassName] = $tag->ClassName;
+						$existing->TagTypes = serialize($existingTypes);
+						$existing->write();
+						$fusionID = $existing->ID;
+					}
+
+					// Update the current tag to point to this.
+
+					$tag->FusionTagID = $fusionID;
+					$tag->write();
+					DB::alteration_message("\"{$tag->$field}\" Fusion Tag", 'created');
+				}
+			}
+		}
 
 		// Determine whether tag type exclusions have caused any fusion tags to become redundant.
 
@@ -61,46 +98,6 @@ class FusionTag extends DataObject {
 				'FusionTagID' => 0
 			));
 			$query->execute();
-		}
-
-		// Retrieve existing and configuration defined tag types that have not been consolidated.
-
-		foreach($types as $type => $field) {
-			if(($tags = $type::get()->filter('FusionTagID', 0)) && $tags->exists()) {
-				foreach($tags as $tag) {
-
-					// Determine whether there's an existing fusion tag.
-
-					if(!($existing = FusionTag::get()->filter('Title', $tag->$field)->first())) {
-
-						// There is no fusion tag, therefore instantiate one using the current tag.
-
-						$fusion = FusionTag::create();
-						$fusion->Title = $tag->$field;
-						$fusion->TagTypes = serialize(array(
-							$tag->ClassName => $tag->ClassName
-						));
-						$fusion->write();
-						$fusionID = $fusion->ID;
-					}
-					else {
-
-						// There is a fusion tag, therefore append the current tag type.
-
-						$types = unserialize($existing->TagTypes);
-						$types[$tag->ClassName] = $tag->ClassName;
-						$existing->TagTypes = serialize($types);
-						$existing->write();
-						$fusionID = $existing->ID;
-					}
-
-					// Update the current tag to point to this.
-
-					$tag->FusionTagID = $fusionID;
-					$tag->write();
-					DB::alteration_message("\"{$tag->$field}\" Fusion Tag", 'created');
-				}
-			}
 		}
 	}
 
