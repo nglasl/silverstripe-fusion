@@ -28,8 +28,8 @@ class FusionTag extends DataObject {
 
 		// Retrieve existing and configuration defined tag types that have not been consolidated.
 
-		$types = $this->service->getFusionTagTypes();
-		foreach($types as $type => $field) {
+		$wrapped = array();
+		foreach($this->service->getFusionTagTypes() as $type => $field) {
 			if(($tags = $type::get()->filter('FusionTagID', 0)) && $tags->exists()) {
 				foreach($tags as $tag) {
 
@@ -51,9 +51,9 @@ class FusionTag extends DataObject {
 
 						// There is a fusion tag, therefore append the current tag type.
 
-						$existingTypes = unserialize($existing->TagTypes);
-						$existingTypes[$tag->ClassName] = $tag->ClassName;
-						$existing->TagTypes = serialize($existingTypes);
+						$types = unserialize($existing->TagTypes);
+						$types[$tag->ClassName] = $tag->ClassName;
+						$existing->TagTypes = serialize($types);
 						$existing->write();
 						$fusionID = $existing->ID;
 					}
@@ -65,18 +65,15 @@ class FusionTag extends DataObject {
 					DB::alteration_message("\"{$tag->$field}\" Fusion Tag", 'created');
 				}
 			}
+
+			// The existing and configuration defined tag types need to be wrapped for partial matching.
+
+			$wrapped[] ="\"{$type}\"";
 		}
 
 		// Determine whether tag type exclusions have caused any fusion tags to become redundant.
 
 		$tags = FusionTag::get()->where('TagTypes IS NOT NULL');
-
-		// The existing and configuration defined tag types need to be wrapped for partial matching.
-
-		$wrapped = array();
-		foreach($types as $type => $field) {
-			$wrapped[] ="\"{$type}\"";
-		}
 		if(count($wrapped)) {
 
 			// Determine the fusion tags that only contain tag type exclusions.
