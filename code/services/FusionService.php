@@ -14,6 +14,12 @@ class FusionService {
 	private static $custom_tag_types = array();
 
 	/**
+	 *	These tag types will not be consolidated into fusion tags.
+	 */
+
+	private static $tag_type_exclusions = array();
+
+	/**
 	 *	Determine the existing and configuration defined tag types to consolidate.
 	 *
 	 *	@return array(string, string)
@@ -24,13 +30,14 @@ class FusionService {
 		// Determine existing tag types.
 
 		$types = array();
+		$exclusions = Config::inst()->get('FusionService', 'tag_type_exclusions');
 		$classes = ClassInfo::subclassesFor('DataObject');
 		unset($classes['FusionTag']);
 		foreach($classes as $class) {
 
 			// Determine the tag types to consolidate, based on data objects ending with "Tag".
 
-			if((strpos(strrev($class), strrev('Tag')) === 0) && !ClassInfo::classImplements($class, 'TestOnly')) {
+			if((strpos(strrev($class), strrev('Tag')) === 0) && !in_array($class, $exclusions) && !ClassInfo::classImplements($class, 'TestOnly')) {
 
 				// Use the title field as a default.
 
@@ -41,7 +48,7 @@ class FusionService {
 		// Determine configuration defined tag types.
 
 		foreach(Config::inst()->get('FusionService', 'custom_tag_types') as $type => $field) {
-			if(in_array($type, $classes)) {
+			if(in_array($type, $classes) && !in_array($type, $exclusions)) {
 
 				// Use the configuration defined field.
 
