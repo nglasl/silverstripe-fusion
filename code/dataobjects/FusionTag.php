@@ -26,7 +26,7 @@ class FusionTag extends DataObject {
 
 		parent::requireDefaultRecords();
 
-		// Determine the existing and configuration defined tag types.
+		// Determine the existing and configuration defined tag types to consolidate.
 
 		$types = $this->service->getFusionTagTypes();
 
@@ -34,27 +34,27 @@ class FusionTag extends DataObject {
 
 		$tags = FusionTag::get()->where('TagTypes IS NOT NULL');
 
-		// The existing and configuration defined tag types need to be wrapped appropriately for partial matching.
+		// The existing and configuration defined tag types need to be appropriately wrapped for partial matching.
 
 		$wrapped = array();
 		foreach($types as $type => $field) {
 			$wrapped[] ="\"{$type}\"";
 		}
-
-		// Determine the fusion tags that contain only tag type exclusions.
-
 		if(count($wrapped)) {
+
+			// Determine the fusion tags that only contain tag type exclusions.
+
 			$tags = $tags->exclude('TagTypes:PartialMatch', $wrapped);
 		}
 
-		// These fusion tags are now redundant, therefore remove them.
+		// These fusion tags are now redundant.
 
 		foreach($tags as $tag) {
 			$tag->delete();
 			DB::alteration_message("\"{$tag->Title}\" Fusion Tag", 'deleted');
 		}
 
-		// The fusion tag relationships need to be updated to reflect this.
+		// The fusion tag relationships need to be updated.
 
 		foreach(Config::inst()->get('FusionService', 'tag_type_exclusions') as $exclusion) {
 			$query = new SQLUpdate($exclusion, array(
