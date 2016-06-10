@@ -46,6 +46,7 @@ class FusionTag extends DataObject {
 						));
 						$fusion->write();
 						$fusionID = $fusion->ID;
+						DB::alteration_message("\"{$tag->$field}\" Fusion Tag", 'created');
 					}
 					else {
 
@@ -62,7 +63,6 @@ class FusionTag extends DataObject {
 
 					$tag->FusionTagID = $fusionID;
 					$tag->write();
-					DB::alteration_message("\"{$tag->$field}\" Fusion Tag", 'created');
 				}
 			}
 
