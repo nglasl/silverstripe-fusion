@@ -54,7 +54,7 @@ class FusionTag extends DataObject {
 			DB::alteration_message("\"{$tag->Title}\" Fusion Tag", 'deleted');
 		}
 
-		// The tag type exclusion relationships need to be updated.
+		// The tag type exclusions need to be updated.
 
 		foreach(Config::inst()->get('FusionService', 'tag_type_exclusions') as $exclusion) {
 			$query = new SQLUpdate($exclusion, array(
