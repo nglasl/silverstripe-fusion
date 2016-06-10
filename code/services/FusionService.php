@@ -30,7 +30,8 @@ class FusionService {
 		// Determine existing tag types.
 
 		$types = array();
-		$exclusions = Config::inst()->get('FusionService', 'tag_type_exclusions');
+		$configuration = Config::inst();
+		$exclusions = $configuration->get('FusionService', 'tag_type_exclusions');
 		$classes = ClassInfo::subclassesFor('DataObject');
 		unset($classes['FusionTag']);
 		foreach($classes as $class) {
@@ -47,7 +48,7 @@ class FusionService {
 
 		// Determine configuration defined tag types.
 
-		foreach(Config::inst()->get('FusionService', 'custom_tag_types') as $type => $field) {
+		foreach($configuration->get('FusionService', 'custom_tag_types') as $type => $field) {
 			if(in_array($type, $classes) && !in_array($type, $exclusions)) {
 
 				// Use the configuration defined field.

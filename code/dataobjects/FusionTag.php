@@ -66,7 +66,7 @@ class FusionTag extends DataObject {
 				}
 			}
 
-			// The existing and configuration defined tag types need to be wrapped for partial matching.
+			// The existing and configuration defined tag types need to be wrapped for serialised partial matching.
 
 			$wrapped[] ="\"{$type}\"";
 		}
@@ -88,7 +88,7 @@ class FusionTag extends DataObject {
 			DB::alteration_message("\"{$tag->Title}\" Fusion Tag", 'deleted');
 		}
 
-		// The tag type exclusions need to be updated.
+		// The tag type exclusions need updating to reflect this.
 
 		foreach(Config::inst()->get('FusionService', 'tag_type_exclusions') as $exclusion) {
 			$query = new SQLUpdate($exclusion, array(
