@@ -102,6 +102,8 @@ class FusionTag extends DataObject {
 
 			$mode = Versioned::get_reading_mode();
 			Versioned::reading_stage('Stage');
+			$types = array();
+			$purged = array();
 			foreach($tags as $tag) {
 
 				// Determine whether this fusion tag is being used.
@@ -118,24 +120,24 @@ class FusionTag extends DataObject {
 
 				// These fusion tags are now redundant.
 
-				foreach(unserialize($tag->TagTypes) as $exclusion) {
-
-					// The tag type exclusions need updating to reflect this.
-
-					$query = new SQLUpdate($exclusion, array(
-						'FusionTagID' => 0
-					), array(
-						'FusionTagID' => $ID
-					));
-					$query->execute();
-				}
-
-				// Purge them.
-
 				$tag->delete();
+				$types = array_merge($types, unserialize($tag->TagTypes));
+				$purged[] = array(
+					'FusionTagID' => $ID
+				);
 				DB::alteration_message("\"{$tag->Title}\" Fusion Tag", 'deleted');
 			}
 			Versioned::set_reading_mode($mode);
+
+			// The tag type exclusions need updating to reflect this.
+
+			foreach($types as $exclusion) {
+				$query = new SQLUpdate($exclusion, array(
+					'FusionTagID' => 0
+				), $purged);
+				$query->useDisjunction();
+				$query->execute();
+			}
 		}
 	}
 
