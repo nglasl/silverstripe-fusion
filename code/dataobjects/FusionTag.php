@@ -236,7 +236,7 @@ class FusionTag extends DataObject {
 
 			// Update the custom field to reflect the change correctly.
 
-			$this->Types = array_keys($formatted);
+			$this->Types = implode(',', $formatted);
 		}
 	}
 
