@@ -80,51 +80,53 @@ class FusionTag extends DataObject {
 
 			$tags = $tags->exclude('TagTypes:PartialMatch', $wrapped);
 		}
+		if($tags->exists()) {
 
-		// Determine any data objects with the tagging extension.
+			// Determine any data objects with the tagging extension.
 
-		$classes = ClassInfo::subclassesFor('DataObject');
-		unset($classes['DataObject']);
-		$configuration = Config::inst();
-		$objects = array();
-		foreach($classes as $class) {
+			$classes = ClassInfo::subclassesFor('DataObject');
+			unset($classes['DataObject']);
+			$configuration = Config::inst();
+			$objects = array();
+			foreach($classes as $class) {
 
-			// Determine the specific data object extensions.
+				// Determine the specific data object extensions.
 
-			$extensions = $configuration->get($class, 'extensions', Config::UNINHERITED);
-			if(is_array($extensions) && in_array('TaggingExtension', $extensions)) {
-				$objects[] = $class;
-			}
-		}
-
-		// Determine whether these fusion tags are now redundant.
-
-		$mode = Versioned::get_reading_mode();
-		Versioned::reading_stage('Stage');
-		foreach($tags as $tag) {
-
-			// Determine whether this fusion tag is being used.
-
-			foreach($objects as $object) {
-				if($object::get()->filter('FusionTags.ID', $tag->ID)->count()) {
-					break 2;
+				$extensions = $configuration->get($class, 'extensions', Config::UNINHERITED);
+				if(is_array($extensions) && in_array('TaggingExtension', $extensions)) {
+					$objects[] = $class;
 				}
 			}
 
-			// These fusion tags are now redundant.
+			// Determine whether these fusion tags are now redundant.
 
-			$tag->delete();
-			DB::alteration_message("\"{$tag->Title}\" Fusion Tag", 'deleted');
-		}
-		Versioned::set_reading_mode($mode);
+			$mode = Versioned::get_reading_mode();
+			Versioned::reading_stage('Stage');
+			foreach($tags as $tag) {
 
-		// The tag type exclusions need updating to reflect this.
+				// Determine whether this fusion tag is being used.
 
-		foreach(Config::inst()->get('FusionService', 'tag_type_exclusions') as $exclusion) {
-			$query = new SQLUpdate($exclusion, array(
-				'FusionTagID' => 0
-			));
-			$query->execute();
+				foreach($objects as $object) {
+					if($object::get()->filter('FusionTags.ID', $tag->ID)->exists()) {
+						break 2;
+					}
+				}
+
+				// These fusion tags are now redundant.
+
+				$tag->delete();
+				DB::alteration_message("\"{$tag->Title}\" Fusion Tag", 'deleted');
+			}
+			Versioned::set_reading_mode($mode);
+
+			// The tag type exclusions need updating to reflect this.
+
+			foreach(Config::inst()->get('FusionService', 'tag_type_exclusions') as $exclusion) {
+				$query = new SQLUpdate($exclusion, array(
+					'FusionTagID' => 0
+				));
+				$query->execute();
+			}
 		}
 	}
 
