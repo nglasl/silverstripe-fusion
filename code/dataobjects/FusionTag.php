@@ -106,27 +106,36 @@ class FusionTag extends DataObject {
 
 				// Determine whether this fusion tag is being used.
 
+				$ID = $tag->ID;
 				foreach($objects as $object) {
-					if($object::get()->filter('FusionTags.ID', $tag->ID)->exists()) {
-						break 2;
+					if($object::get()->filter('FusionTags.ID', $ID)->exists()) {
+
+						// This fusion tag is being used, so keep it.
+
+						continue 2;
 					}
 				}
 
 				// These fusion tags are now redundant.
 
+				foreach(unserialize($tag->TagTypes) as $exclusion) {
+
+					// The tag type exclusions need updating to reflect this.
+
+					$query = new SQLUpdate($exclusion, array(
+						'FusionTagID' => 0
+					), array(
+						'FusionTagID' => $ID
+					));
+					$query->execute();
+				}
+
+				// Purge them.
+
 				$tag->delete();
 				DB::alteration_message("\"{$tag->Title}\" Fusion Tag", 'deleted');
 			}
 			Versioned::set_reading_mode($mode);
-
-			// The tag type exclusions need updating to reflect this.
-
-			foreach(Config::inst()->get('FusionService', 'tag_type_exclusions') as $exclusion) {
-				$query = new SQLUpdate($exclusion, array(
-					'FusionTagID' => 0
-				));
-				$query->execute();
-			}
 		}
 	}
 
