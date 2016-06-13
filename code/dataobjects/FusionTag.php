@@ -120,11 +120,11 @@ class FusionTag extends DataObject {
 
 				// These fusion tags are now redundant.
 
-				$tag->delete();
 				$types = array_merge($types, unserialize($tag->TagTypes));
 				$purged[] = array(
 					'FusionTagID' => $ID
 				);
+				$tag->delete();
 				DB::alteration_message("\"{$tag->Title}\" Fusion Tag", 'deleted');
 			}
 			Versioned::set_reading_mode($mode);
