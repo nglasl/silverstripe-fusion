@@ -81,12 +81,42 @@ class FusionTag extends DataObject {
 			$tags = $tags->exclude('TagTypes:PartialMatch', $wrapped);
 		}
 
-		// These fusion tags are now redundant.
+		// Determine any data objects with the tagging extension.
 
+		$classes = ClassInfo::subclassesFor('DataObject');
+		unset($classes['DataObject']);
+		$configuration = Config::inst();
+		$objects = array();
+		foreach($classes as $class) {
+
+			// Determine the specific data object extensions.
+
+			$extensions = $configuration->get($class, 'extensions', Config::UNINHERITED);
+			if(is_array($extensions) && in_array('TaggingExtension', $extensions)) {
+				$objects[] = $class;
+			}
+		}
+
+		// Determine whether these fusion tags are now redundant.
+
+		$mode = Versioned::get_reading_mode();
+		Versioned::reading_stage('Stage');
 		foreach($tags as $tag) {
+
+			// Determine whether this fusion tag is being used.
+
+			foreach($objects as $object) {
+				if($object::get()->filter('FusionTags.ID', $tag->ID)->count()) {
+					break 2;
+				}
+			}
+
+			// These fusion tags are now redundant.
+
 			$tag->delete();
 			DB::alteration_message("\"{$tag->Title}\" Fusion Tag", 'deleted');
 		}
+		Versioned::set_reading_mode($mode);
 
 		// The tag type exclusions need updating to reflect this.
 
