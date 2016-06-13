@@ -103,7 +103,7 @@ class FusionTag extends DataObject {
 			$mode = Versioned::get_reading_mode();
 			Versioned::reading_stage('Stage');
 			$types = array();
-			$purged = array();
+			$where = array();
 			foreach($tags as $tag) {
 
 				// Determine whether this fusion tag is being used.
@@ -121,7 +121,7 @@ class FusionTag extends DataObject {
 				// These fusion tags are now redundant.
 
 				$types = array_merge($types, unserialize($tag->TagTypes));
-				$purged[] = array(
+				$where[] = array(
 					'FusionTagID' => $ID
 				);
 				$tag->delete();
@@ -134,7 +134,7 @@ class FusionTag extends DataObject {
 			foreach($types as $exclusion) {
 				$query = new SQLUpdate($exclusion, array(
 					'FusionTagID' => 0
-				), $purged);
+				), $where);
 				$query->useDisjunction();
 				$query->execute();
 			}
