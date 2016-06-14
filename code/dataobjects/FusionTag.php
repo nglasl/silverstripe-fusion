@@ -84,10 +84,10 @@ class FusionTag extends DataObject {
 
 			// Determine any data objects with the tagging extension.
 
+			$objects = array();
+			$configuration = Config::inst();
 			$classes = ClassInfo::subclassesFor('DataObject');
 			unset($classes['DataObject']);
-			$configuration = Config::inst();
-			$objects = array();
 			foreach($classes as $class) {
 
 				// Determine the specific data object extensions.
@@ -240,10 +240,16 @@ class FusionTag extends DataObject {
 			// Update the tag types with a serialised representation.
 
 			$formatted = array();
+			$existing = $this->service->getFusionTagTypes();
 			foreach($types as $type) {
-				$formatted[$type] = $type;
+
+				// The tag type exclusions need checking.
+
+				if(isset($existing[$type])) {
+					$formatted[$type] = $type;
+				}
 			}
-			$this->TagTypes = serialize($formatted);
+			$this->TagTypes = !empty($formatted) ? serialize($formatted) : null;
 
 			// Update the custom field to reflect the change correctly.
 

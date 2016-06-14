@@ -31,6 +31,9 @@ class FusionService {
 
 		$types = array();
 		$configuration = Config::inst();
+
+		// The tag type exclusions need checking.
+
 		$exclusions = $configuration->get('FusionService', 'tag_type_exclusions');
 		$classes = ClassInfo::subclassesFor('DataObject');
 		unset($classes['FusionTag']);
