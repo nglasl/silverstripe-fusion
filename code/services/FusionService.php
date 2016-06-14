@@ -72,9 +72,9 @@ class FusionService {
 
 		// Determine any data objects with the tagging extension.
 
+		$configuration = Config::inst();
 		$classes = ClassInfo::subclassesFor('DataObject');
 		unset($classes['DataObject']);
-		$configuration = Config::inst();
 		foreach($classes as $class) {
 
 			// Determine the specific data object extensions.
