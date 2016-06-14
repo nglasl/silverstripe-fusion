@@ -1,6 +1,6 @@
 # [fusion](https://packagist.org/packages/nglasl/silverstripe-fusion)
 
-_The current release is **1.1.3**_
+_The current release is **2.0.0**_
 
 > A module for SilverStripe which will automatically consolidate existing tag types into new fusion tags, and allows searchable content tagging out of the box.
 
@@ -24,6 +24,12 @@ These will be automatically consolidated, based on data objects ending with `Tag
 FusionService:
   custom_tag_types:
     TagName: 'Attribute'
+```
+
+```yaml
+FusionService:
+  tag_type_exclusions:
+    - 'TagName'
 ```
 
 ### Tag Management
