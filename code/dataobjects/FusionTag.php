@@ -132,9 +132,13 @@ class FusionTag extends DataObject {
 			// The tag type exclusions need updating to reflect this.
 
 			foreach($types as $exclusion) {
-				$query = new SQLUpdate($exclusion, array(
-					'FusionTagID' => 0
-				), $where);
+				$query = new SQLUpdate(
+					$exclusion,
+					array(
+						'FusionTagID' => 0
+					),
+					$where
+				);
 				$query->useDisjunction();
 				$query->execute();
 			}
