@@ -47,13 +47,12 @@ class FusionExtension extends DataExtension {
 
 		// Confirm that the tag has been given a title and doesn't already exist.
 
-		$this->owner->$validate = strtolower($this->owner->$validate);
 		if($result->valid() && !$this->owner->$validate) {
 			$result->error("\"{$validate}\" required!");
 		}
 		else if($result->valid() && $class::get_one($class, array(
 			'ID != ?' => $this->owner->ID,
-			"{$validate} = ?" => $this->owner->$validate
+			"LOWER({$validate}) = ?" => strtolower($this->owner->$validate)
 		))) {
 			$result->error('Tag already exists!');
 		}
