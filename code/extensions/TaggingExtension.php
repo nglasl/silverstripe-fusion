@@ -32,17 +32,17 @@ class TaggingExtension extends DataExtension {
 		// Instantiate a field containing the existing tags.
 
 		$fields = array_merge(array(
-			'Tagging' => array(
+			'FusionTags.ID' => array(
 				'title' => 'Tags',
 				'field' => ListboxField::create(
-					'Tagging',
+					'FusionTags.ID',
 					'Tags',
-					FusionTag::get()->map('Title', 'Title')->toArray(),
-					(($filtering = Controller::curr()->getRequest()->getVar('q')) && isset($filtering['Tagging'])) ? $filtering['Tagging'] : array(),
+					FusionTag::get()->map('ID', 'Title')->toArray(),
+					(($filtering = Controller::curr()->getRequest()->getVar('q')) && isset($filtering['FusionTags.ID'])) ? $filtering['FusionTags.ID'] : array(),
 					null,
 					true
 				),
-				'filter' => $this->owner->dbObject('Tagging')->stat('default_search_filter_class')
+				'filter' => 'ExactMatchFilter'
 			)
 		), $fields);
 
