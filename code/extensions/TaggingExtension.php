@@ -30,8 +30,7 @@ class TaggingExtension extends DataExtension {
 	public function updateSearchableFields(&$fields) {
 
 		// Instantiate a field containing the existing tags.
-
-		$fields = array_merge(array(
+		$fields = array_merge($fields, array(
 			'FusionTags.ID' => array(
 				'title' => 'Tags',
 				'field' => ListboxField::create(
@@ -44,7 +43,7 @@ class TaggingExtension extends DataExtension {
 				),
 				'filter' => 'ExactMatchFilter'
 			)
-		), $fields);
+		));
 
 		// Allow extension.
 
