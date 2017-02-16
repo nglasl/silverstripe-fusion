@@ -20,17 +20,34 @@ class CMSMainTaggingExtension extends Extension {
 		// Instantiate a field containing the existing tags.
 
 		$form->Fields()->insertBefore(ListboxField::create(
-			'q[Tagging]',
+			'q[FusionTags]',
 			'Tags',
-			FusionTag::get()->map('Title', 'Title')->toArray(),
-			(($filtering = $this->owner->getRequest()->getVar('q')) && isset($filtering['Tagging'])) ? $filtering['Tagging'] : array(),
+			FusionTag::get()->map('ID', 'Title')->toArray(),
+			(($filtering = $this->owner->getRequest()->getVar('q')) && isset($filtering['FusionTags'])) ? $filtering['FusionTags'] : array(),
 			null,
 			true
 		), 'q[Term]');
+        
+        $filterClass = $form->Fields()->dataFieldByName('q[FilterClass]');
+        $options = $filterClass->getSource();
+        unset($options['CMSSiteTreeFilter_Search']);
+        $filterClass->setSource($options);
 
 		// Allow extension.
 
 		$this->owner->extend('updateCMSMainTaggingExtensionSearchForm', $form);
 	}
 
+}
+
+class CMSSiteTreeFilterTagging_Search extends CMSSiteTreeFilter_Search {
+    public function getFilteredPages() {
+		$pages = parent::getFilteredPages();
+        if (isset($this->params['FusionTags']) && count($this->params['FusionTags'])) {
+            $pages = $pages->filter(array(
+                'FusionTags.ID' => $this->params['FusionTags']
+            ));
+        }
+        return $pages;
+	}
 }
