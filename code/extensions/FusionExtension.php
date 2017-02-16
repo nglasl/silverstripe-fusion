@@ -40,7 +40,7 @@ class FusionExtension extends DataExtension {
 		$validate = 'Title';
 		$class = $this->owner->ClassName;
 		foreach(Config::inst()->get('FusionService', 'custom_tag_types') as $type => $field) {
-			if($type === $class) {
+			if(is_a($class, $type, true)) {
 				$validate = $field;
 			}
 		}
