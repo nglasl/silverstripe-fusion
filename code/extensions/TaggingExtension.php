@@ -38,7 +38,7 @@ class TaggingExtension extends DataExtension {
 					'Tagging',
 					'Tags',
 					FusionTag::get()->map('Title', 'Title')->toArray(),
-					(($filtering = Controller::curr()->getRequest()->getVar('q')) && isset($filtering['Tagging'])) ? $filtering['Tagging'] : array(),
+					(Controller::has_curr() && ($filtering = Controller::curr()->getRequest()->getVar('q')) && isset($filtering['Tagging'])) ? $filtering['Tagging'] : array(),
 					null,
 					true
 				),
