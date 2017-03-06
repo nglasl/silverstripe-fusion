@@ -19,7 +19,7 @@ class FusionUnitTests extends SapphireTest {
 
 		parent::setUpOnce();
 
-		// The fusion testing tag needs to be included.
+		// The fusion testing tag needs to be a custom tag type.
 
 		Config::inst()->update('FusionService', 'custom_tag_types', array(
 			'FusionTestingTag' => 'Title'
@@ -30,7 +30,7 @@ class FusionUnitTests extends SapphireTest {
 	 *	The test to ensure the fusion tags are functioning correctly.
 	 */
 
-	public function testFusionTags() {
+	public function testTags() {
 
 		// Instantiate a tag to use.
 
@@ -44,6 +44,9 @@ class FusionUnitTests extends SapphireTest {
 		$fusion = FusionTag::get()->byID($ID);
 		$this->assertTrue(is_object($fusion));
 		$this->assertEquals($fusion->Title, $tag->Title);
+
+		// The tag types need to be wrapped for serialised partial matching.
+
 		$this->assertContains('"FusionTestingTag"', $fusion->TagTypes);
 
 		// Update the tag.
@@ -88,10 +91,6 @@ class FusionTestingTag extends DataObject implements TestOnly {
 	private static $db = array(
 		'Title' => 'Varchar(255)'
 	);
-
-	/**
-	 *	The tag requires the fusion extension.
-	 */
 
 	private static $extensions = array(
 		'FusionExtension'
