@@ -50,12 +50,6 @@ class FusionExtension extends DataExtension {
 		if($result->valid() && !$this->owner->$validate) {
 			$result->error("\"{$validate}\" required!");
 		}
-		else if($result->valid() && $class::get_one($class, array(
-			"{$class}.ID != ?" => $this->owner->ID,
-			"LOWER({$validate}) = ?" => strtolower($this->owner->$validate)
-		))) {
-			$result->error('Tag already exists!');
-		}
 
 		// Allow extension.
 

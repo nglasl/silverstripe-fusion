@@ -299,12 +299,14 @@ class FusionTag extends DataObject {
 
 				// Determine whether this fusion tag has been updated.
 
-				else if(!isset($changed['ID']) && isset($changed['Title']) && ($existing = $type::get()->filter($field, $changed['Title']['before'])->first())) {
+				else if(!isset($changed['ID']) && isset($changed['Title']) && ($existing = $type::get()->filter($field, $changed['Title']['before']))) {
 
-					// There is an update, therefore update the existing tag to reflect the change.
+					// There is an update, therefore update the existing tag/s to reflect the change.
 
-					$existing->$field = $changed['Title']['after'];
-					$existing->write();
+					foreach($existing as $tag) {
+						$tag->$field = $changed['Title']['after'];
+						$tag->write();
+					}
 				}
 			}
 		}
