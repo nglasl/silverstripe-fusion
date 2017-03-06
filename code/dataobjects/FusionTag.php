@@ -26,6 +26,12 @@ class FusionTag extends DataObject {
 
 		parent::requireDefaultRecords();
 
+		// This isn't required during testing.
+
+		if(Controller::has_curr() && (Controller::curr() instanceof TestRunner)) {
+			return;
+		}
+
 		// Retrieve existing and configuration defined tag types that have not been consolidated.
 
 		$wrapped = array();
@@ -68,7 +74,7 @@ class FusionTag extends DataObject {
 
 			// The existing and configuration defined tag types need to be wrapped for serialised partial matching.
 
-			$wrapped[] ="\"{$type}\"";
+			$wrapped[] = "\"{$type}\"";
 		}
 
 		// Determine whether tag type exclusions have caused any fusion tags to become redundant.
