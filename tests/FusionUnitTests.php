@@ -78,6 +78,79 @@ class FusionUnitTests extends SapphireTest {
 		$fusion = FusionTag::get()->byID($ID);
 		$this->assertTrue(is_object($fusion));
 		$this->assertEquals($fusion->TagTypes, null);
+
+		// The database needs to be emptied to prevent further testing conflict.
+
+		self::empty_temp_db();
+	}
+
+	/**
+	 *	The test to ensure the page tagging is functioning correctly.
+	 */
+
+	public function testTagging() {
+
+		// Instantiate a page to use.
+
+		$page = SiteTree::create();
+
+		// Determine whether consolidated tags are found in the existing relationships.
+
+		$types = array();
+		$existing = singleton('FusionService')->getFusionTagTypes();
+		foreach($existing as $type => $field) {
+			$types[$type] = $type;
+		}
+		$types = array_intersect($page->many_many(), $types);
+		if(empty($types)) {
+
+			// Instantiate a tag to use, adding it against the page.
+
+			$tag = FusionTag::create();
+			$field = 'Title';
+			$tag->$field = 'new';
+			$tag->write();
+			$page->FusionTags()->add($tag->ID);
+		}
+		else {
+
+			// There are consolidated tags found.
+
+			foreach($types as $relationship => $type) {
+
+				// Instantiate a tag to use, adding it against the page.
+
+				$tag = $type::create();
+				$field = $existing[$type];
+				$tag->$field = 'new';
+				$tag->write();
+				$page->$relationship()->add($tag->ID);
+
+				// The consolidated tags are automatically parsed, so this only needs to exist against one.
+
+				break;
+			}
+		}
+		$page->writeToStage('Stage');
+		$page->writeToStage('Live');
+
+		// Determine whether the page tagging reflects this.
+
+		$this->assertContains($tag->$field, $page->Tagging);
+
+		// Update the tag.
+
+		$tag->$field = 'changed';
+		$tag->write();
+
+		// Determine whether the page tagging reflects this.
+
+		$page = SiteTree::get()->byID($page->ID);
+		$this->assertContains($tag->$field, $page->Tagging);
+
+		// The database needs to be emptied to prevent further testing conflict.
+
+		self::empty_temp_db();
 	}
 
 }

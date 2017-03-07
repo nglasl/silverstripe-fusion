@@ -118,9 +118,9 @@ class TaggingExtension extends DataExtension {
 			foreach($types as $relationship => $type) {
 				foreach($this->owner->$relationship() as $tag) {
 
-					// Update both the fusion tags and tagging.
+					// Update both the fusion tags and tagging (using the relationship causes caching issues).
 
-					$fusion = $tag->FusionTag();
+					$fusion = FusionTag::get()->byID($tag->FusionTagID);
 					$this->owner->FusionTags()->add($fusion);
 					$tagging[] = $fusion->Title;
 				}
