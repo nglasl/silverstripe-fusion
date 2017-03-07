@@ -126,7 +126,7 @@ class FusionUnitTests extends SapphireTest {
 				$tag->write();
 				$page->$relationship()->add($tag->ID);
 
-				// The consolidated tags are automatically parsed, so this only needs to exist against one.
+				// The consolidated tags are automatically combined, so this only needs to exist against one.
 
 				break;
 			}
