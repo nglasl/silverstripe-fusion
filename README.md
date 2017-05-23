@@ -1,6 +1,6 @@
 # [fusion](https://packagist.org/packages/nglasl/silverstripe-fusion)
 
-_The current release is **2.0.6**_
+_The current release is **2.0.7**_
 
 > A module for SilverStripe which will automatically consolidate existing tag types into new fusion tags, and allows searchable content tagging out of the box.
 
@@ -10,7 +10,7 @@ _The current release is **2.0.6**_
 
 ## Getting Started
 
-* Place the module under your root project directory.
+* [Place the module under your root project directory.](https://packagist.org/packages/nglasl/silverstripe-fusion)
 * `/dev/build`
 * Select `Tagging` through the CMS.
 
