@@ -2,7 +2,7 @@
 
 /**
  *	This extension will automatically be applied, allowing CMS searchable content tagging.
- *	@author Nathan Glasl <nathan@silverstripe.com.au>
+ *	@author Nathan Glasl <nathan@symbiote.com.au>
  */
 
 class CMSMainTaggingExtension extends Extension {

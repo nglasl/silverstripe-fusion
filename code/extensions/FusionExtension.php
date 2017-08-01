@@ -2,7 +2,7 @@
 
 /**
  *	This extension will automatically be applied to existing and configuration defined tag types, and will help consolidate these into fusion tags.
- *	@author Nathan Glasl <nathan@silverstripe.com.au>
+ *	@author Nathan Glasl <nathan@symbiote.com.au>
  */
 
 class FusionExtension extends DataExtension {

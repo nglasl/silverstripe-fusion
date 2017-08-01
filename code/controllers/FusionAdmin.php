@@ -2,7 +2,7 @@
 
 /**
  *	The interface for creating, managing and consolidating tags.
- *	@author Nathan Glasl <nathan@silverstripe.com.au>
+ *	@author Nathan Glasl <nathan@symbiote.com.au>
  */
 
 class FusionAdmin extends ModelAdmin {

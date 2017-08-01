@@ -2,7 +2,7 @@
 
 /**
  *	This extension will automatically be applied to pages, allowing searchable content tagging.
- *	@author Nathan Glasl <nathan@silverstripe.com.au>
+ *	@author Nathan Glasl <nathan@symbiote.com.au>
  */
 
 class TaggingExtension extends DataExtension {

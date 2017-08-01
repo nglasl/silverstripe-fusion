@@ -2,7 +2,7 @@
 
 /**
  *	The fusion specific unit testing.
- *	@author Nathan Glasl <nathan@silverstripe.com.au>
+ *	@author Nathan Glasl <nathan@symbiote.com.au>
  */
 
 class FusionUnitTests extends SapphireTest {

@@ -2,7 +2,7 @@
 
 /**
  *	Tags that consolidate existing and configuration defined tag types.
- *	@author Nathan Glasl <nathan@silverstripe.com.au>
+ *	@author Nathan Glasl <nathan@symbiote.com.au>
  */
 
 class FusionTag extends DataObject {

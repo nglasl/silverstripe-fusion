@@ -2,7 +2,7 @@
 
 /**
  *	This provides functionality for the fusion module.
- *	@author Nathan Glasl <nathan@silverstripe.com.au>
+ *	@author Nathan Glasl <nathan@symbiote.com.au>
  */
 
 class FusionService {
